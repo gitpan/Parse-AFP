@@ -83,14 +83,11 @@ sub BPG {
 sub PTX {
     my ($rec, $buf) = @_;
 
+    return $rec->done if $has_udc;
+
     # Now iterate over $$buf.
     my $pos = 11;
     my $len = length($$buf);
-    my $TRN_data;
-
-    $PTX_cnt++;
-    #print "PTX #", $PTX_cnt, ' ==>', uc(join ' ', unpack('(H2)*', substr($$buf, $pos))), $/;
-    #print "PTX", $PTX_cnt, $/;
 
     while ($pos < $len) {
         my ($size, $code) = unpack("x${pos}CC", $$buf);
@@ -98,10 +95,8 @@ sub PTX {
         $size or die "Incorrect parsing: $pos\n";
 
         if ($code == 0xDA or $code == 0xDB) {
-            #print $TRN_data,"==>", uc(unpack('H*', $TRN_data)), $/;
             if ( substr($$buf, $pos + 2, $size - 2) !~ /$NoUDC/o) {
                 $has_udc = 1;
-                #print "<udc>", $TRN_data, uc(unpack('H*', $TRN_data)), $/;
                 last;
             }
         }

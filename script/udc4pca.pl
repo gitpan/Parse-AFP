@@ -62,7 +62,7 @@ my (%FontToId, %IdToFont);
 
 ##########################################################################
 
-no warnings 'once';
+no warnings qw(once numeric);
 my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die $DBI::errstr;
 my $fonts = $dbh->selectall_hashref("SELECT * FROM Fonts", 'FontName') or die $dbh->errstr;
 
@@ -80,16 +80,28 @@ opendir my $dh, $dir or die $!;
 
 print STDERR "\nPhase 2: Join...";
 
-unlink $output;
-foreach my $file (readdir($dh)) {
+unlink $output if -e $output;
+open my $ofh, '>', $output or die $!;
+binmode($ofh);
+
+foreach my $file (sort { int($a) <=> int($b) } readdir($dh)) {
     my $name = $file;
     if ($file =~ /^(.+)\.udc$/) {
         $name = $1;
         udc4pca("$dir/$file" => "$dir/$name");
     }
     $name =~ /^\d+$/ or next;
-    system("cat $dir/$name >> $output");
+
+    open my $ifh, '<', "$dir/$name" or die $!;
+    binmode($ifh);
+    local $/ = \32768;
+    while (<$ifh>) {
+        print $ofh $_;
+    }
+    close $ifh;
 }
+
+close $ofh;
 
 print STDERR "\nDone!";
 
@@ -97,6 +109,7 @@ sub udc4pca {
     my ($in, $out) = @_;
     if (my $pid = fork) {
         waitpid($pid, 0);
+        print STDERR ".";
     }
     else {
         my $afp = Parse::AFP->new($in, {lazy => 1, output_file => $out});
@@ -117,7 +130,6 @@ sub PGD {
     $XPageSize = $rec->XPageSize;
     $YPageSize = $rec->YPageSize;
     $rec->done;
-    print STDERR ".";
 }
 
 sub MCF1 {
@@ -161,12 +173,12 @@ sub PTX {
     my $font_eid;
 
     # Now iterate over $$buf.
-    my $pos = 2;
+    my $pos = 11;
     my $len = length($$buf);
 
     while ($pos < $len) {
         my ($size, $code) = unpack("x${pos}CC", $$buf);
-        $size or last;
+        $size or die "Incorrect parsing: $pos\n";
 
         if ($code == 0xDA or $code == 0xDB) {
             if (substr($$buf, $pos + 2, $size - 2) !~ $NoUDC) {
