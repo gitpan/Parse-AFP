@@ -166,6 +166,11 @@ sub PTX_TRN {
 sub EPG {
     my $rec = shift;
 
+    if (!@UDC) {
+	$rec->write; $rec->remove;
+	return;
+    }
+
     # ... write out the actual BII..IOC..IID..ICP..IRD..EII images ...
     #print "Writing out Bitmap...\n" if @UDC;
 
@@ -240,7 +245,6 @@ sub EPG {
     )->write;
 
     @UDC = ();
-
     $rec->write; $rec->remove;
 }
 

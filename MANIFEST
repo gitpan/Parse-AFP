@@ -19,7 +19,9 @@ lib/Parse/AFP/BDA.pm
 lib/Parse/AFP/BDD.pm
 lib/Parse/AFP/BDG.pm
 lib/Parse/AFP/BDI.pm
+lib/Parse/AFP/BDM.pm
 lib/Parse/AFP/BDT.pm
+lib/Parse/AFP/BDX.pm
 lib/Parse/AFP/BFG.pm
 lib/Parse/AFP/BFM.pm
 lib/Parse/AFP/BFN.pm
@@ -32,6 +34,7 @@ lib/Parse/AFP/BNG.pm
 lib/Parse/AFP/BOC.pm
 lib/Parse/AFP/BOG.pm
 lib/Parse/AFP/BPG.pm
+lib/Parse/AFP/BPM.pm
 lib/Parse/AFP/BPS.pm
 lib/Parse/AFP/BPT.pm
 lib/Parse/AFP/BR.pm
@@ -45,6 +48,7 @@ lib/Parse/AFP/CPC.pm
 lib/Parse/AFP/CPD.pm
 lib/Parse/AFP/CPI.pm
 lib/Parse/AFP/CTC.pm
+lib/Parse/AFP/DXD.pm
 lib/Parse/AFP/EAG.pm
 lib/Parse/AFP/EBC.pm
 lib/Parse/AFP/ECA.pm
@@ -52,7 +56,9 @@ lib/Parse/AFP/ECF.pm
 lib/Parse/AFP/ECP.pm
 lib/Parse/AFP/EDG.pm
 lib/Parse/AFP/EDI.pm
+lib/Parse/AFP/EDM.pm
 lib/Parse/AFP/EDT.pm
+lib/Parse/AFP/EDX.pm
 lib/Parse/AFP/EFG.pm
 lib/Parse/AFP/EFM.pm
 lib/Parse/AFP/EFN.pm
@@ -65,6 +71,7 @@ lib/Parse/AFP/ENG.pm
 lib/Parse/AFP/EOC.pm
 lib/Parse/AFP/EOG.pm
 lib/Parse/AFP/EPG.pm
+lib/Parse/AFP/EPM.pm
 lib/Parse/AFP/EPS.pm
 lib/Parse/AFP/EPT.pm
 lib/Parse/AFP/ER.pm
@@ -94,6 +101,8 @@ lib/Parse/AFP/IPO.pm
 lib/Parse/AFP/IPS.pm
 lib/Parse/AFP/IRD.pm
 lib/Parse/AFP/LLE.pm
+lib/Parse/AFP/LNC.pm
+lib/Parse/AFP/LND.pm
 lib/Parse/AFP/MBC.pm
 lib/Parse/AFP/MCA.pm
 lib/Parse/AFP/MCC.pm

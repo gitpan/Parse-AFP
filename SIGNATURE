@@ -1,12 +1,12 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.38.
+signed via the Module::Signature module, version 0.41.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
     % cpansign -v
 
-It would check each file's integrity, as well as the signature's
+It will check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
 not run its Makefile.PL or Build.PL.
@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 4a2a1d99685a721df6510a8e9d1d1e4511fcf24c Changes
-SHA1 9eb0be5a35ba3bacf3d27419a2c45ee2f00c1dbc MANIFEST
+SHA1 2f3ddac22487f3a77c645a5be65f5a37789ffbfe Changes
+SHA1 d0a581742c7e517fdcbf64bd5a18b52f12400a14 MANIFEST
 SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 b89aeb5e6142bf4944a5da7166a1f6c578a631f8 META.yml
+SHA1 19169e9a10084177edc466d57a285de11aa644e7 META.yml
 SHA1 11f78b94eaba85f975d74f2d721b64345db9cad5 Makefile.PL
 SHA1 74f88204e791fc72c7d197cbdf011044d0225f2a README
 SHA1 b26ac27e5a57677aa210c0e908b28ff3ba28f03b inc/Module/Install.pm
@@ -26,10 +26,10 @@ SHA1 9ce6768a7b8f7032ec89594b773fafd58c6feb1d inc/Module/Install/Can.pm
 SHA1 b6c8f0f22c4c8ba48a7bac2c5e4bd61803a7b097 inc/Module/Install/Fetch.pm
 SHA1 aabcd47178e4e7b27e340ff5273269c93697c9c1 inc/Module/Install/Makefile.pm
 SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
-SHA1 bfc36deb38cf94243679dfa71f6e8c4e2000d20a inc/Module/Install/Scripts.pm
+SHA1 48ea7ce20a63ff1583036d6c4b8fd8e4c24457e6 inc/Module/Install/Scripts.pm
 SHA1 aff9341a15c04faec47089851e43d9d4061337e7 inc/Module/Install/Win32.pm
 SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 31f3bfc997bafe32cebb0d90cda6721609a416d2 lib/Parse/AFP.pm
+SHA1 6064c895d1d14db0f46255a9de845e136fd22b42 lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -39,7 +39,9 @@ SHA1 34b8efd34017324d2194f95bdcf9ad0675ac041f lib/Parse/AFP/BDA.pm
 SHA1 cbff314df9459dbc3cbc40ea0f293cce949eaa3e lib/Parse/AFP/BDD.pm
 SHA1 926003c9df236c6c30c568157c35650b0edaac9e lib/Parse/AFP/BDG.pm
 SHA1 1661b7044c182438210c6b5f340302f2b092b866 lib/Parse/AFP/BDI.pm
+SHA1 606937a627caa2da3ce59014101221ea08179b2a lib/Parse/AFP/BDM.pm
 SHA1 3c35d9d182ddf8fb868b0bc0d28c23dbbeef7aba lib/Parse/AFP/BDT.pm
+SHA1 8085c7342d168a0ee730feb9dff886925912df8a lib/Parse/AFP/BDX.pm
 SHA1 d5391db627bc8e57e49e5e11d3e83c877613b52a lib/Parse/AFP/BFG.pm
 SHA1 103dac43d74e32550548b6c66341f86323c0e73c lib/Parse/AFP/BFM.pm
 SHA1 9476e8d7bb97dc8b25f39a9f71962dafb70b3f53 lib/Parse/AFP/BFN.pm
@@ -52,6 +54,7 @@ SHA1 3b015d537fcc5c3a0c8e396289de139e4d4ec49c lib/Parse/AFP/BNG.pm
 SHA1 9a6641de210f6a7d156c79eb9519037586eea71f lib/Parse/AFP/BOC.pm
 SHA1 9d12fe6747f71a49cbcaf348aa638cd28e8eefc0 lib/Parse/AFP/BOG.pm
 SHA1 a100f697f2a6df1078bf68671e11fc78527e6230 lib/Parse/AFP/BPG.pm
+SHA1 a1d2d7500a3ec4cc25a1ed32ba6629c4e8b2fd18 lib/Parse/AFP/BPM.pm
 SHA1 9a39e6a1a36bf3f120d2a8084b2e2a718723d275 lib/Parse/AFP/BPS.pm
 SHA1 a7b67f83d76232da820197a01b934102d2407ebf lib/Parse/AFP/BPT.pm
 SHA1 2e512e97d177ca1b5be090933d94fa8a57b456f0 lib/Parse/AFP/BR.pm
@@ -66,6 +69,7 @@ SHA1 6c60d9934939be52d79d6b04a169579a974610d0 lib/Parse/AFP/CPC.pm
 SHA1 802c60ddfe0741eee33c131e8f08d7716b15dd8b lib/Parse/AFP/CPD.pm
 SHA1 26678c522e96255de93cc239d03ca466798aa05c lib/Parse/AFP/CPI.pm
 SHA1 f2cd4988ce111fcebeb442d052d1382dbf990ab0 lib/Parse/AFP/CTC.pm
+SHA1 2c897a126da1504418eec10ed7fbe3d1a03cc52e lib/Parse/AFP/DXD.pm
 SHA1 9ae2d59a7f52604afd30a4d8f97c21528d20fd0c lib/Parse/AFP/EAG.pm
 SHA1 be6a2ffd09d8d4e1d558d1737d01e11cd536e450 lib/Parse/AFP/EBC.pm
 SHA1 81179b522bf2ca3d2eac5eb4bfd66256ecbdebc7 lib/Parse/AFP/ECA.pm
@@ -73,7 +77,9 @@ SHA1 eb9328017c127b9db96e526bc71f2d634c415882 lib/Parse/AFP/ECF.pm
 SHA1 86dada72edd068209536b435a509a13956adc13c lib/Parse/AFP/ECP.pm
 SHA1 d80112a45328fed100203a9ca50b605030b9b57e lib/Parse/AFP/EDG.pm
 SHA1 8ee55fd21b11bc6d95253a9627cdb1b42516d32f lib/Parse/AFP/EDI.pm
+SHA1 c78ad8b386eea346e63e6fd0dd88eea69991f339 lib/Parse/AFP/EDM.pm
 SHA1 0da2b666b8f920f8ca39bf6ca36ba2bc6564e6dc lib/Parse/AFP/EDT.pm
+SHA1 dc0b09d34fc549a9b5ca3a3b16719646a048243a lib/Parse/AFP/EDX.pm
 SHA1 17531b4a7b65777199568aa160a3303c72921c98 lib/Parse/AFP/EFG.pm
 SHA1 7bd6c582f2bec7c7581fb69bfbdde369cf69cf40 lib/Parse/AFP/EFM.pm
 SHA1 5880d04e9ceae2424c749bf817063815ecfd346e lib/Parse/AFP/EFN.pm
@@ -86,6 +92,7 @@ SHA1 e14e26575b4c86d80d3377846032d5b735586f61 lib/Parse/AFP/ENG.pm
 SHA1 a76a0a9a4d9ac8a79be1068bcd2959f5df2e0895 lib/Parse/AFP/EOC.pm
 SHA1 97d34cd90bb2b7d1131249496d27e4a3410d6110 lib/Parse/AFP/EOG.pm
 SHA1 54cf4de0ced5e0271f0bce1f260218eec4db1a8d lib/Parse/AFP/EPG.pm
+SHA1 16ac9dfac0a1d8299fb837084f1146563691d664 lib/Parse/AFP/EPM.pm
 SHA1 59040ac61047e2ccdd6de1c3cc2117dbf9f8ce2e lib/Parse/AFP/EPS.pm
 SHA1 6141e59159aa54942cede6fd28c8b57c745c450e lib/Parse/AFP/EPT.pm
 SHA1 4a2a6bd72fbf8800f6bbe9c8daf4268b4a636e26 lib/Parse/AFP/ER.pm
@@ -115,6 +122,8 @@ SHA1 15366088c183b518f3e2562a5acd3cbb9c1ccf6b lib/Parse/AFP/IPO.pm
 SHA1 d3da7ba4b6613527f6c21d02a65d77090a4db9a8 lib/Parse/AFP/IPS.pm
 SHA1 419ca2545432242f7e68a1ca39b139d206775bb8 lib/Parse/AFP/IRD.pm
 SHA1 354c5ff354ecac1b55506954d0b12efc43c8705c lib/Parse/AFP/LLE.pm
+SHA1 2843f4bea2f98e64f71a76282699bd1127c88263 lib/Parse/AFP/LNC.pm
+SHA1 1625f845135c4599ee9f338e60de8c7283dca057 lib/Parse/AFP/LND.pm
 SHA1 591c6ee8367ebb7cbd4a141e74bbf20bc7be34c4 lib/Parse/AFP/MBC.pm
 SHA1 5e1ba235574cb8137f24605f049f8aa183e552af lib/Parse/AFP/MCA.pm
 SHA1 57ea2446acd3de213d9c69a1d63888b4356234c8 lib/Parse/AFP/MCC.pm
@@ -158,7 +167,7 @@ SHA1 523e2bb5538bc5f8de5d04cfe36d0eea34729654 lib/Parse/AFP/PTX/SCFL.pm
 SHA1 5ad259874a3acc6a1c0fbdcad63338cd3baa3653 lib/Parse/AFP/PTX/SIM.pm
 SHA1 e071618fe1be763e41aa977e4b5803cd857e8fbe lib/Parse/AFP/PTX/STO.pm
 SHA1 5d001ed19cb5d73156837ee0813a6adb10319c5b lib/Parse/AFP/PTX/TRN.pm
-SHA1 56272d416169566630f478235548a04c13260f8a lib/Parse/AFP/Record.pm
+SHA1 b6bcbe774df0aaf05103878bc08cdc0b8e54bfdf lib/Parse/AFP/Record.pm
 SHA1 1fc34adfad0891baeb0a201d283f6da503ee0666 lib/Parse/AFP/TLE.pm
 SHA1 5d21a56ef90a42718e46b58daf25ba879c7a40e8 lib/Parse/AFP/Triplet.pm
 SHA1 80bcacd39bed7abd1b6c7b3bf3eb29318f584a20 lib/Parse/AFP/Triplet/AD.pm
@@ -223,14 +232,14 @@ SHA1 ccdc7c5c7274544da77cecaa4e13880186c7bc34 script/afpdump.pl
 SHA1 a56a245237c31275841f9b4dc065d8f7c1505352 script/afpmkfontdb.pl
 SHA1 6770217a1d79ce0637373e30ef5d7e6eed2f230a script/afpsplit.pl
 SHA1 2460f2ac28176f0f97e321b6310d7aeb5d3d7509 script/afpviewfontdb.pl
-SHA1 8b7737a86ad70fc5fab7bbd7070106a80fe8830d script/udc4pca.pl
+SHA1 1c0bfaa268a09380b910c4fd0ca41a2617461d88 script/udc4pca.pl
 SHA1 66037a2f6b3266884223d4c9515f5a06930f6181 t/0-signature.t
 SHA1 3af5e6e80364a5dfadfec8002cabc7dccf25ebef t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBSYA4tLPdNzw1AaARAp4lAJ4jPOsHOV2Sdbfu1Ns1e8doJxY8ywCgnQ1Y
-wUktZmmdvyKyVzMzqhE7vq0=
-=yt4h
+iD8DBQFBUC9RtLPdNzw1AaARApD8AKCaKKzAxDsMgIBLX3Fb+epf8QijhwCaAgvd
+RzbfHrWIdPujTbiwLr4tcDM=
+=3KR7
 -----END PGP SIGNATURE-----

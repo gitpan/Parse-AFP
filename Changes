@@ -1,3 +1,9 @@
+[Changes for 0.10 - 2004-09-21]
+
+* In udc4pca.pl, do not write out BII sections with the page has no UDC in it.
+* New parsing subclasses for: ( BDM BDX BPM DXD EDM EDX EPM LNC LND )
+  Contributed by Thomas Yeh.
+
 [Changes for 0.09 - 2004-09-16]
 
 * Fixed an infinite loop bug when parsing MCF1.
