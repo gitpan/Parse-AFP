@@ -10,7 +10,7 @@ Parse::AFP uses the standard perl module install process:
 
 cpansign -v		# optional; see SIGNATURE for details
 perl Makefile.PL
-make			# or 'nmake' on Parse; see notes below
+make			# or 'nmake' on Win32; see notes below
 make test
 make install
 

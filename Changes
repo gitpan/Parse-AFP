@@ -1,3 +1,7 @@
+[Changes for 0.23 - 2004-10-21]
+
+* udcsplit.pl now always allocates constant memory.
+
 [Changes for 0.21 - 2004-10-14]
 
 * udc4pca.pl now supports RMI/RMB sections.

@@ -5,8 +5,22 @@ use lib "$FindBin::Bin/../../Parse-Binary/lib";
 
 use strict;
 use Parse::AFP;
+use Parse::AFP::PTX;
 use Getopt::Std;
 use File::Path 'rmtree';
+
+{
+package Parse::AFP::Record;
+sub new {
+    my ($self, $buf, $attr) = @_;
+    if (substr($$buf, 3, 3) eq "\xD3\xEE\x9B") {
+        return bless($buf, 'PTX');
+    }
+    return $self->SUPER::new($buf, $attr);
+}
+sub PTX::done { return }
+sub PTX::callback { main::PTX($_[0], $_[0]) }
+}
 
 my %NoUDC = (
     947 => qr{

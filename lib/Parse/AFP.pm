@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.21';
+$Parse::AFP::VERSION = '0.23';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -95,8 +95,10 @@ sub tight_loop {
 
         # Do Something Interesting with $header and $buf
         $is_dirty = 0;
+
         my $rec = Parse::AFP::Record->new( \$buf, $attr );
         $rec->callback($callback, @_, \$buf);
+
         $ofh = $self->{output};
         print $ofh $buf unless $is_dirty;
         next;
@@ -113,8 +115,8 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.21 of Parse::AFP, released
-October 14, 2004.
+This document describes version 0.23 of Parse::AFP, released
+October 21, 2004.
 
 =head1 SYNOPSIS
 
