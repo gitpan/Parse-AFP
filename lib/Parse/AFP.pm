@@ -2,17 +2,17 @@
 # $Revision: #14 $ $Change: 4137 $ $DateTime: 2003/02/08 11:41:59 $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.02';
+$Parse::AFP::VERSION = '0.03';
 
 use strict;
 use base 'Parse::AFP::Base';
 use constant FORMAT => (
-    MemberData => ['H2 n/a* XX', '*', '2'],
+    Record => ['H2 n/a* XX', '*', '2'],
 );
-use constant MEMBER_CLASS => 'Record';
+use constant BASE_CLASS => __PACKAGE__;
 
 # Must start with the magic byte 0x90
-sub valid_memberdata { $_[1][0] eq '5a' }
+sub valid_memberdata { $_[-1][0] eq '5a' }
 
 1;
 
@@ -24,7 +24,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.0.1 of Parse::AFP, released February 10, 2004.
+This document describes version 0.03 of Parse::AFP, released February 14, 2004.
 
 =head1 SYNOPSIS
 
@@ -87,18 +87,9 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 Copyright 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
-This module is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
-This library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this progam; if not, write to the Free Software Foundation,
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut

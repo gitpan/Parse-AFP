@@ -3,24 +3,27 @@
 
 use strict;
 use FindBin;
-use lib "$FindBin::Bin/../lib";
 use Test::More tests => 20;
 
-use_ok('Parse::AFP');
-use_ok('File::Slurp');
+$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
+$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
-ok(my $orig = read_file("$FindBin::Bin/in.afp"), 'read in.afp');
+use_ok('Parse::AFP');
+
+my $file = "$FindBin::Bin/in.afp";
+
+ok(my $orig = Parse::AFP->read_file($file), 'read_file');
 my $chunk1 = $1 if $orig =~ /^(Z.*?)Z/;
 
-my $afp = Parse::AFP->new("$FindBin::Bin/in.afp");
-
+my $afp = Parse::AFP->new($file);
 isa_ok($afp, 'Parse::AFP');
 ok($afp->is_type('Base'), 'is_type("Base")');
-is_deeply([$afp->fields], ['MemberData'], 'fields');
-is($afp->field_format('MemberData'), 'H2 n/a* XX', 'field_format');
+is_deeply([$afp->fields], ['Record'], 'fields');
+is($afp->field_format('Record'), 'H2 n/a* XX', 'field_format');
 
-my $rec = ($afp->members)[0];
+my $rec = $afp->first_member;
 
+ok($rec->is_type('Record'), 'is_type("Record")');
 is($rec->dump, $chunk1, 'dump' );
 is($afp->dump, $orig, 'roundtrip');
 $afp->refresh;
@@ -49,7 +52,7 @@ isa_ok($new_scfl, 'Parse::AFP::PTX::SCFL');
 
 $ptx->refresh;
 is(($ptx->members)[-1]->ControlCode, $last_cc, 'PTX->refresh');
-is_deeply($scfl, $new_scfl, 'prepend_obj');
+is_deeply($new_scfl, $scfl, 'prepend_obj');
 is($ptx->Length, $ptx_length + $new_scfl->Length, 'Length');
 $scfl->remove;
 

@@ -3,7 +3,6 @@
 
 package Parse::AFP::Triplet;
 use base 'Parse::AFP::Base';
-
 use constant FORMAT => (
     Length	=> 'C',	    # length() + 2
     Type	=> 'H2',

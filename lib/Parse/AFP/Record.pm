@@ -3,7 +3,7 @@
 
 package Parse::AFP::Record;
 use base 'Parse::AFP::Base';
-
+use base 'Parse::Binary';
 use constant FORMAT => (
     CC		=> 'H2',
     Length	=> 'n',	    # length() + 2

@@ -5,8 +5,7 @@ package Parse::AFP::MCF;
 use base 'Parse::AFP::Record';
 
 use constant SUBFORMAT => (
-    MemberData	    => ['n/a* XX', '*'],
+    'MCF::DataGroup'	=> ['n/a* XX', '*'],
 );
-use constant MEMBER_CLASS => 'MCF::DataGroup';
 
 1;

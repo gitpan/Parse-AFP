@@ -5,11 +5,11 @@ inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Parse/AFP.pm
 lib/Parse/AFP/Base.pm
-lib/Parse/AFP/FixedFormat.pm
 lib/Parse/AFP/MCF.pm
 lib/Parse/AFP/MCF/DataGroup.pm
 lib/Parse/AFP/MCF1.pm

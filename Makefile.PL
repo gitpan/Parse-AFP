@@ -7,12 +7,13 @@ use inc::Module::Install;
 name		('Parse-AFP');
 author		('Autrijus Tang <autrijus@autrijus.org>');
 abstract	('IBM Advanced Function Printing Parser');
-license		('gpl');
+license		('perl');
 version_from	('lib/Parse/AFP.pm');
+install_script	(<script/*.pl>);
 
 requires	(
     'perl'	    => '5.8.2',
-    'File::Slurp'   => 0,
+    'Parse::Binary' => 0.01,
 );
 
 WriteAll( sign => 1 );

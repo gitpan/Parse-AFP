@@ -6,8 +6,7 @@ use base 'Parse::AFP::Base';
 
 use constant FORMAT => (
     Length	=> 'n',
-    MemberData	=> [ 'C/a* X', '*' ],
+    'Triplet'	=> [ 'C/a* X', '*' ],
 );
-use constant MEMBER_CLASS => 'Triplet';
 
 1;
