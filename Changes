@@ -1,3 +1,9 @@
+[Changes for 0.11 - 2004-09-22]
+
+* In udc4pca.pl, respect SBI and BLN in setting baseline increments. 
+* New PTX parsing subclasses for ( SIA SBI SVI STC BSU ESU RMB RMI RPS NOP ).
+  Both contributed by Thomas Yeh.
+
 [Changes for 0.10 - 2004-09-21]
 
 * In udc4pca.pl, do not write out BII sections with the page has no UDC in it.

@@ -1,4 +1,7 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
+
+eval 'exec /usr/local/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
@@ -84,7 +87,7 @@ sub PTX {
     my $rec = shift;
     my $font_eid;
     # print STDERR '.';
-    $rec->callback_members([map "PTX::$_", qw(SIM STO SCFL AMI AMB TRN)], \$font_eid);
+    $rec->callback_members([map "PTX::$_", qw(SIM SBI STO SCFL AMI AMB BLN TRN)], \$font_eid);
     $rec->refresh; 
     $rec->write; $rec->remove;
 }
@@ -104,6 +107,18 @@ my $InlineMargin;
 sub PTX_SIM {
     my $rec = shift;
     $InlineMargin = $rec->Data;
+}
+
+my $BaselineIncrement;
+sub PTX_SBI {
+    my $rec = shift;
+    $BaselineIncrement = $rec->Data;
+}
+
+sub PTX_BLN {
+    my $rec = shift;
+    $x = $InlineMargin;
+    $y += $BaselineIncrement;
 }
 
 my ($XOrientation, $YOrientation);
