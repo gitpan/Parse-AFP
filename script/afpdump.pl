@@ -8,6 +8,16 @@ use encoding 'utf8';
 use File::Basename;
 use Parse::AFP;
 
+my %desc;
+foreach my $type qw( Record Triplet PTX/ControlSequence ) {
+    require "Parse/AFP/$type.pm";
+    open my $fh, $INC{"Parse/AFP/$type.pm"} or die $!;
+    while (<$fh>) {
+	/'([A-Z][:\w]+)',\s+#\s?(.+)/ or next;
+	$desc{$1} = $2;
+    }
+}
+
 sub Header ();
 sub Parse::AFP::PTX::TRN::ENCODING () { 'big5' };
 
@@ -29,8 +39,11 @@ sub dump_afp {
     my $obj = shift;
     my $struct = $obj->struct;
     print "<table border=0 summary='$obj'>";
-    foreach my $key (sort keys %$struct) {
-	next if $key =~ /^_/ or ref $struct->{$key};
+
+    my @keys = sort grep !/^_|^(?:Data|EscapeSequence|ControlCode|Length|CC|(?:Sub)?Type|FlagByte)$/, keys %$struct;
+    push @keys, 'Data' if exists $struct->{Data};
+    foreach my $key (@keys) {
+	next if ref $struct->{$key};
 	length($x = $struct->{$key}) or next;
 
 	if ($obj->ENCODING and $key eq 'Data') {
@@ -38,9 +51,18 @@ sub dump_afp {
 	    $x = qq("$x");
 	}
 	elsif ($x =~ /[^\w\s]/) {
-	    $x = '<span class="hex">'.uc(join(' ', unpack('(H2)*', $x))).'</span>';
+	    $x = '<span class="hex">'.uc(join(' ',
+		(length($x) <= 80) 
+		    ? unpack('(H2)*', $x)
+		    : (unpack('(H2)*', substr($x, 0, 80)), '...')
+	    )).'</span>';
 	}
-	print "<tr><td class='label'>$key</td><td class='item'>$x</td></tr>\n";
+	if ($key eq 'Data') {
+	    print "<tr><td colspan='2' class='item'>$x</td></tr>\n";
+	}
+	else {
+	    print "<tr><td class='label'>$key</td><td class='item'>$x</td></tr>\n";
+	}
     }
 
     print "</table>";
@@ -54,7 +76,10 @@ sub dump_afp {
 sub dump_members {
     my $obj = shift;
     while (my $rec = $obj->next_member) {
-	print "<li><strong>". substr(ref($rec), 12)."</strong>";
+	my $type = substr(ref($rec), 12);
+	print "<li><div><strong>$type</strong>";
+	print " &ndash; $desc{$type}" if exists $desc{$type};
+	print "</div>";
 	dump_afp($rec);
 	print "</li>";
     }
@@ -63,15 +88,15 @@ sub dump_members {
 use constant Header => << '.';
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><style type='text/css'><!--
-body { background: #e0e0e0 }
-h1 { text-decoration: underline }
-span.hex { font-style: italic }
+body { background: #e0e0e0; font-family: times new roman, times; margin-left: 20px }
+h1 { font-family: times }
+span.hex { font-family: andale mono, courier }
 ol { border-left: 1px dotted black }
 ol.top { border-left: none }
-table { font-size: small; border-left: 1px dotted black; padding-left: 6pt }
-td.label { background: #d0d0d0 }
-td.item { background: white; width: 100% }
-strong { text-decoration: underline; background: #c0c0ff; display: block }
+table { font-size: small; border-left: 1px dotted black; padding-left: 6pt; width: 100% }
+td.label { background: #d0d0d0; font-family: arial unicode ms, helvetica }
+td.item { background: white; width: 100%; font-family: arial unicode ms, helvetica }
+div { text-decoration: underline; background: #e0e0ff; font-family: arial unicode ms, helvetica }
 --></style><title>AFP Dump</title></head><body>
 .
 

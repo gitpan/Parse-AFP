@@ -5,7 +5,7 @@ package Parse::AFP::BII;
 use base 'Parse::AFP::Record';
 
 use constant SUBFORMAT => (
-    Data => 'a*',    # not yet parsed!
+    ImageObjectName => 'a8',
 );
 
 1;

@@ -5,7 +5,8 @@ package Parse::AFP::PTX::STO;
 use base 'Parse::AFP::PTX::ControlSequence';
 
 use constant SUBFORMAT => (
-    Data	=> 'a*',    # XXX - not handled yet
+    Orientation     => 'H4',
+    WrapDirection   => 'H4',
 );
 
 1;

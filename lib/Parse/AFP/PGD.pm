@@ -9,8 +9,10 @@ use constant SUBFORMAT => (
     YUnitBase		=> 'C',
     XLUnitsperUnitBase	=> 'n',
     YLUnitsperUnitBase	=> 'n',
-    XPageSize		=> 'H6',
-    YPageSize		=> 'H6',
+    Reserved1		=> 'C', # '00'
+    XPageSize		=> 'n',
+    Reserved2		=> 'C', # '00'
+    YPageSize		=> 'n',
     _			=> 'a*',
 );
 

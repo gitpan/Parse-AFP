@@ -52,13 +52,27 @@ my $name = $2;
 print "Parsing font $name.";
 Parse::AFP->new($file, { lazy => 1 })->callback_members([qw( CFC CFI )]);
 
+$dbh->commit;
+$dbh->begin_work;
+
+# Heuristic: If Variations <= 3, we think it's fixed width font.
+my $dimension = "Width || ',' || Height";
+my $variations = $dbh->selectall_arrayref(qq(
+    SELECT Width, Height, COUNT($dimension)
+      FROM $FontName
+  GROUP BY $dimension
+  ORDER BY Count($dimension) DESC
+));
+
 $dbh->do(
     "INSERT INTO Fonts VALUES (?, ?, ?, ?)", {},
-    $FontName, $Resolution, 0, 0
+    $FontName, $Resolution, (@$variations > 3) ? (0, 0) : @{$variations->[0]}[0, 1]
 );
 
 $dbh->commit;
 $dbh->disconnect;
+
+print "\n";
 
 exit;
 

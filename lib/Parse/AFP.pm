@@ -2,7 +2,7 @@
 # $Revision: #10 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.07';
+$Parse::AFP::VERSION = '0.08';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -37,7 +37,8 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.07 of Parse::AFP, released September 9, 2004.
+This document describes version 0.08 of Parse::AFP, released
+September 13, 2004.
 
 =head1 SYNOPSIS
 
@@ -56,6 +57,9 @@ This document describes version 0.07 of Parse::AFP, released September 9, 2004.
 This module processes IBM's B<AFP> (Advanced Function Printing) files
 into an object hierarchy; each object may be individually modified, dumped
 into binary, or written back to another AFP file.
+
+Running the bundled C<afpdump.pl> on a AFP file will probably explain
+this module's behaviour better than reading the documentation.
 
 =head1 METHODS
 

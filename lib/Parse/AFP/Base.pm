@@ -4,6 +4,7 @@
 package Parse::AFP::Base;
 
 use strict;
+use Parse::Binary;
 use base 'Parse::Binary';
 use constant BASE_CLASS => 'Parse::AFP';
 use constant DEFAULT_ARGS => ( Length => 0 );

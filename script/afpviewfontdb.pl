@@ -11,16 +11,18 @@ die "Usage: $0 fonts.db\n" unless @ARGV >= 1 or -e 'fonts.db';
 
 my $input = shift || 'fonts.db';
 my $dbh = DBI->connect("dbi:SQLite:dbname=$input") or die $DBI::errstr;
-my $fonts = $dbh->selectcol_arrayref("SELECT FontName FROM Fonts") or die $dbh->errstr;
-$dbh->{sqlite_handle_binary_nulls} = 1;
+my $fonts = $dbh->selectall_arrayref("SELECT FontName, FixedWidth, FixedHeight FROM Fonts")
+  or die $dbh->errstr;
 
 while (1) {
     for (1 .. @$fonts) {
-        print "$_: $fonts->[$_-1]\n";
+        my ($name, $width, $height) = @{$fonts->[$_-1]};
+        my $dimension = ($width ? "$width * $height" : 'variable width');
+        print "$_: $name - $dimension\n";
     }
     print "Choose a font to display: ";
     my $choice = int(<STDIN>) or exit;
-    my $name = $fonts->[$choice-1] or next;
+    my $name = $fonts->[$choice-1][0] or next;
 
     my $sth = $dbh->prepare("SELECT * FROM $name ORDER BY Character");
     $sth->execute;
@@ -41,6 +43,6 @@ while (1) {
         );
 
         $row->{Bitmap} or next;
-        last if <STDIN> =~ /[yq!]/i;
+        last if <STDIN> =~ /^\z|[yq!]/i;
     }
 }

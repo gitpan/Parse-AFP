@@ -5,7 +5,12 @@ package Parse::AFP::ICP;
 use base 'Parse::AFP::Record';
 
 use constant SUBFORMAT => (
-    Data => 'a*',    # not yet parsed!
+    XCellOffset     => 'n',
+    YCellOffset     => 'n',
+    XCellSize       => 'n',
+    YCellSize       => 'n',
+    XFillSize       => 'n',
+    YFillSize       => 'n',
 );
 
 1;

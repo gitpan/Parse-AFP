@@ -85,7 +85,7 @@ sub PTX_TRN {
     my ($dat, $font_ref) = @_;
 
     my $font_eid = $$font_ref or return;
-    $IdToFont{$font_eid} =~ /^GT/ or next;
+    $IdToFont{$font_eid} =~ /^GT/ or return;
     my $font_cid = ($font_eid + 1);
 
     my $string = $dat->Data;
