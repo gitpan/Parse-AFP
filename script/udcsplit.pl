@@ -38,16 +38,17 @@ my $NoUDC = $NoUDC{$codepage} or die "Unknown codepage: $codepage\n";
 
 mkdir $output;
 my $afp = Parse::AFP->new($input, { lazy => 1, output_file => "$output/0" });
-$afp->callback_members([qw( BPG PTX * )]);
+$afp->callback_members([qw( BNG BPG PTX * )]);
 
-my ($has_udc, $name, $prev);
+my ($has_udc, $name, $prev, $has_BNG, $PTX_cnt);
 
 if ($has_udc) {
     rename("$output/$name" => "$output/$name.udc") or die $!;
 }
 
-sub BPG {
+sub BNG {
     $prev = $name; $name++;
+    $has_BNG = 1;
 
     $afp->set_output_file("$output/$name");
 
@@ -60,20 +61,47 @@ sub BPG {
     $_[0]->done;
 }
 
+sub BPG {
+    if( !$has_BNG ) {
+
+	$prev = $name; $name++;
+	$afp->set_output_file("$output/$name");
+
+	if ($has_udc) {
+	    print STDERR '.';
+	    rename("$output/$prev" => "$output/$prev.udc") or die $!;
+	    $has_udc = 0;
+	}
+    }
+    else {
+	$has_BNG = 0;
+    }	
+
+    $_[0]->done;
+}
+
 sub PTX {
     my ($rec, $buf) = @_;
 
     # Now iterate over $$buf.
-    my $pos = 2;
+    my $pos = 11;
     my $len = length($$buf);
+    my $TRN_data;
+
+    $PTX_cnt++;
+    #print "PTX #", $PTX_cnt, ' ==>', uc(join ' ', unpack('(H2)*', substr($$buf, $pos))), $/;
+    #print "PTX", $PTX_cnt, $/;
 
     while ($pos < $len) {
         my ($size, $code) = unpack("x${pos}CC", $$buf);
-        $size or last;
+
+        $size or die "Incorrect parsing: $pos\n";
 
         if ($code == 0xDA or $code == 0xDB) {
-            if (substr($$buf, $pos + 2, $size - 2) !~ /$NoUDC/o) {
+            #print $TRN_data,"==>", uc(unpack('H*', $TRN_data)), $/;
+            if ( substr($$buf, $pos + 2, $size - 2) !~ /$NoUDC/o) {
                 $has_udc = 1;
+                #print "<udc>", $TRN_data, uc(unpack('H*', $TRN_data)), $/;
                 last;
             }
         }

@@ -1,3 +1,9 @@
+[Changes for 0.19 - 2004-10-13]
+
+* The UDC lookahead logic was broken in udcsplit.pl; its offset needs
+  to be 11 bytes, not 2 bytes.
+* Add BNG (Named Page Group) handling in udcsplit.pl.
+
 [Changes for 0.18 - 2004-10-13]
 
 * udc4pca.pl was not writing IM sections.

@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.18';
+$Parse::AFP::VERSION = '0.19';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -16,7 +16,7 @@ sub valid_unformat {
     return if $content->[0] ne '5a';
     my $members = $self->{callback_members};
     my $table = Parse::AFP::Record->dispatch_table;
-    my $type = $table->{ unpack('H6', $content->[1]) } or return;
+    my $type = $table->{ unpack('H6', $content->[1]) };
     if (!$members->{ $type } and my $fh = $self->output) {
 	print $fh $$data;
 	return;
@@ -113,7 +113,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.18 of Parse::AFP, released
+This document describes version 0.19 of Parse::AFP, released
 October 13, 2004.
 
 =head1 SYNOPSIS
