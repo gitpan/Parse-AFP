@@ -1,3 +1,9 @@
+[Changes for 0.18 - 2004-10-13]
+
+* udc4pca.pl was not writing IM sections.
+* Use fork() to implement a two-pass algorithm for udc4pca, as suggested
+  by Thomas Yeh.
+
 [Changes for 0.17 - 2004-10-12]
 
 * More udc4pca.pl optimization: only processes PTX chunks that has

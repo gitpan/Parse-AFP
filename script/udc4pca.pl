@@ -25,15 +25,6 @@ my %CodePages = (
             |
             (..)                                    # Double Byte
         }x,
-        NoUDC => qr{^
-            (?:
-                [\x00-\x7f]+
-            |
-                (?:[\xA1-\xC5\xC9-\xF9].)+
-            |
-                (?:\xC6[^\xA1-\xFE])+
-            )*
-        $}x
     },
     835 => {
         FillChar => "\x40\x40",
@@ -45,20 +36,18 @@ my %CodePages = (
             |
             ([\x41-\x91].)                          # Double Byte
         }x,
-        NoUDC => qr{^
-            [^\x92-\xFE]*
-        $}x
     },
 );
 
 my %opts;
-getopts('i:o:f:c:d:', \%opts);
+getopts('i:o:f:c:d:u:', \%opts);
 
 my $input       = $opts{i} || shift;
 my $db          = $opts{f} || (-e 'fonts.db' ? 'fonts.db' : undef);
 my $output      = $opts{o} || 'fixed.afp';
 my $codepage    = $opts{c} || 947;
 my $dbcs_pat    = $opts{d};
+my $dir         = 'udcdir';
 
 my @UDC;
 die "Usage: $0 -c [947|835] -d dbcs_pattern -i input.afp -o output.afp -f fonts.db\n"
@@ -69,19 +58,55 @@ $CodePages{$codepage} or die "Unknown codepage: $codepage";
 my ($FillChar, $FirstChar, $CharPattern, $NoUDC)
     = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern NoUDC )};
 
-
 my (%FontToId, %IdToFont);
 
 ##########################################################################
 
+no warnings 'once';
 my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die $DBI::errstr;
 my $fonts = $dbh->selectall_hashref("SELECT * FROM Fonts", 'FontName') or die $dbh->errstr;
 
-my $afp = Parse::AFP->new($input, {lazy => 1, output_file => $output});
-$afp->callback_members([qw( MCF1 MCF PGD PTX EPG * )]);
+print STDERR "Phase 1: Split...";
+
+(system(
+    $^X,
+    "$FindBin::Bin/udcsplit.pl", 
+    -i => $input,
+    -o => $dir,
+    -c => $codepage,
+) == 0) or die $?;
+
+opendir my $dh, $dir or die $!;
+
+print STDERR "\nPhase 2: Join...";
+
+unlink $output;
+foreach my $file (readdir($dh)) {
+    my $name = $file;
+    if ($file =~ /^(.+)\.udc$/) {
+        $name = $1;
+        udc4pca("$dir/$file" => "$dir/$name");
+    }
+    $name =~ /^\d+$/ or next;
+    system("cat $dir/$name >> $output");
+}
+
+print STDERR "\nDone!";
+
+sub udc4pca {
+    my ($in, $out) = @_;
+    if (my $pid = fork) {
+        waitpid($pid, 0);
+    }
+    else {
+        my $afp = Parse::AFP->new($in, {lazy => 1, output_file => $out});
+        $afp->callback_members([qw( MCF1 MCF PGD PTX EPG * )]);
+        exit;
+    }
+}
 
 sub __ {
-    $_[0]->write; $_[0]->remove;
+    $_[0]->done;
 }
 
 my ($XUnit, $YUnit, $XPageSize, $YPageSize);
@@ -91,7 +116,7 @@ sub PGD {
     $YUnit = $rec->YLUnitsperUnitBase;
     $XPageSize = $rec->XPageSize;
     $YPageSize = $rec->YPageSize;
-    $rec->write; $rec->remove;
+    $rec->done;
     print STDERR ".";
 }
 
@@ -101,13 +126,13 @@ sub MCF1 {
     my $font_eid = $rec->CodedFontLocalId;
     $FontToId{$font_e} = $font_eid;
     $IdToFont{$font_eid} = $font_e;
-    $rec->write; $rec->remove;
+    $rec->done;
 }
 
 sub MCF {
     my $rec = shift;
     $rec->callback_members(['MCF::DataGroup']);
-    $rec->write; $rec->remove;
+    $rec->done;
 }
 
 sub MCF_DataGroup {
@@ -156,7 +181,7 @@ sub PTX {
         $pos += $size;
     }
 
-    $rec->write; $rec->remove;
+    $rec->done;
 }
 
 my ($x, $y);
@@ -271,7 +296,7 @@ sub EPG {
     my $rec = shift;
 
     if (!@UDC) {
-	$rec->write; $rec->remove;
+	$rec->done;
 	return;
     }
 
@@ -356,11 +381,7 @@ sub EPG {
     )->write;
 
     @UDC = ();
-    $rec->write; $rec->remove;
+    $rec->done;
 }
 
 1;
-
-__END__
-
-

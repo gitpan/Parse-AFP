@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.17';
+$Parse::AFP::VERSION = '0.18';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -37,7 +37,7 @@ sub callback_members {
     }
 }
 
-sub _noop { }
+sub _noop { return }
 
 sub read_file {
     my ($self, $file) = @_;
@@ -62,8 +62,7 @@ sub tight_loop {
     my $is_dirty;
     my ($header, $buf);
 
-    local *Parse::AFP::Record::write = \&_noop;
-    local *Parse::AFP::Record::remove = \&_noop;
+    local *Parse::AFP::Record::done = \&_noop;
     local *Parse::AFP::PTX::refresh_parent = sub {
         my $self = shift;
         $self->refresh_length;
@@ -96,9 +95,9 @@ sub tight_loop {
 
         # Do Something Interesting with $header and $buf
         $is_dirty = 0;
-        Parse::AFP::Record->new( \$buf, $attr )
-                          ->callback($callback, @_, \$buf);
-        # $ofh = $self->{output};
+        my $rec = Parse::AFP::Record->new( \$buf, $attr );
+        $rec->callback($callback, @_, \$buf);
+        $ofh = $self->{output};
         print $ofh $buf unless $is_dirty;
         next;
     }
@@ -114,8 +113,8 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.17 of Parse::AFP, released
-October 12, 2004.
+This document describes version 0.18 of Parse::AFP, released
+October 13, 2004.
 
 =head1 SYNOPSIS
 
