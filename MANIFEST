@@ -12,6 +12,7 @@ lib/Parse/AFP/Base.pm
 lib/Parse/AFP/FixedFormat.pm
 lib/Parse/AFP/MCF.pm
 lib/Parse/AFP/MCF/DataGroup.pm
+lib/Parse/AFP/MCF1.pm
 lib/Parse/AFP/PTX.pm
 lib/Parse/AFP/PTX/ControlSequence.pm
 lib/Parse/AFP/PTX/SCFL.pm
@@ -25,6 +26,7 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
 README
+script/afpdump.pl
 SIGNATURE
 t/0-signature.t
 t/1-basic.t

@@ -2,17 +2,17 @@
 # $Revision: #14 $ $Change: 4137 $ $DateTime: 2003/02/08 11:41:59 $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.01';
+$Parse::AFP::VERSION = '0.02';
 
 use strict;
 use base 'Parse::AFP::Base';
 use constant FORMAT => (
-    MemberData => ['C n/a* XX', '*', '2'],
+    MemberData => ['H2 n/a* XX', '*', '2'],
 );
 use constant MEMBER_CLASS => 'Record';
 
 # Must start with the magic byte 0x90
-sub valid_memberdata { $_[1][0] eq '90' }
+sub valid_memberdata { $_[1][0] eq '5a' }
 
 1;
 

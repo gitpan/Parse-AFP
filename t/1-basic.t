@@ -17,7 +17,7 @@ my $afp = Parse::AFP->new("$FindBin::Bin/in.afp");
 isa_ok($afp, 'Parse::AFP');
 ok($afp->is_type('Base'), 'is_type("Base")');
 is_deeply([$afp->fields], ['MemberData'], 'fields');
-is($afp->field_format('MemberData'), 'C n/a* XX', 'field_format');
+is($afp->field_format('MemberData'), 'H2 n/a* XX', 'field_format');
 
 my $rec = ($afp->members)[0];
 

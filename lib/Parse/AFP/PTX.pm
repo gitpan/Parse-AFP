@@ -4,7 +4,6 @@
 package Parse::AFP::PTX;
 use base 'Parse::AFP::Record';
 
-# XXX - really split with 2BD3!
 use constant SUBFORMAT => (
     EscapeSequence => 'H4',	# 2BD3
     MemberData => ['C/a* X', '*'],
@@ -27,6 +26,14 @@ sub refresh {
     }
 
     $self->SUPER::refresh;
+}
+
+sub load_struct {
+    my ($self, $data) = @_;
+    # XXX - first get the header, then split with 2BD3,
+    # then do a step-by-step tokenization to make sure
+    # raw text fields get respected
+    $self->{Struct} = $self->parser->unformat($$data . $self->padding);
 }
 
 1;

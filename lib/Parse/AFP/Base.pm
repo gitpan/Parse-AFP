@@ -168,14 +168,25 @@ sub member_length_bytes {
     return length(pack($1, 0));
 }
 
+sub load_struct {
+    my ($self, $data) = @_;
+    local $SIG{__WARN__} = sub {};
+    $self->{Struct} = $self->parser->unformat($$data . $self->padding);
+}
+
+sub load_length {
+    my ($self) = @_;
+    if (exists $self->{Struct}{Length}) {
+	$self->{Struct}{Length} += $self->field_length('Length');
+    }
+}
+
 sub load {
     my ($self, $data) = @_;
     return $self unless defined $data;
 
-    $self->{Struct} = $self->parser->unformat($$data . $self->padding);
-    if (exists $self->{Struct}{Length}) {
-	$self->{Struct}{Length} += $self->field_length('Length');
-    }
+    $self->load_struct($data);
+    $self->load_length;
 
     if (my $field = $self->dispatch_field) {
 	my $value = $self->$field;
@@ -387,6 +398,8 @@ sub refresh {
     if ($self->has_members) {
 	my $parser = $self->field_parser('MemberData');
 	my $padding = $self->padding;
+
+	local $SIG{__WARN__} = sub {};
 	$self->SetMemberData( [
 	    map {
 		$parser->unformat( $_->dump . $padding)->{MemberData}[0]
