@@ -1,8 +1,5 @@
-# $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP.pm $ $Author: autrijus $
-# $Revision: #10 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
-
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.13';
+$Parse::AFP::VERSION = '0.14';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -27,6 +24,48 @@ sub valid_unformat {
     return 1;
 }
 
+sub make_next_member {
+    my $self = shift;
+    my $class = ref($self);
+    my $struct = $self->{struct};
+    my $field = $Parse::Binary::MemberFields{$class}[0];
+
+    my $items = $struct->{$field};
+    my $code = $self->SUPER::make_next_member;
+    my $count = 0;
+
+    sub {
+        undef $items->[$count++] if $count;
+        push @$items, &{$self->{_read_chunk}};
+        goto &$code;
+    };
+}
+
+sub read_file {
+    my ($self, $file) = @_;
+    return $self->SUPER::read_file($file) unless ref $self and $self->{lazy};
+
+    open my $fh, '<', $file or die "Cannot open $file for reading: $!";
+    binmode($fh);
+
+    my ($code, $length, $data);
+    read($fh, $code, 1);
+    read($fh, $length, 2);
+    read($fh, $data, (unpack('n', $length) - 2));
+
+    if (!eof($fh)) {
+        $self->{_read_chunk} = sub {
+            read($fh, $code, 1);
+            read($fh, $length, 2);
+            read($fh, $data, (unpack('n', $length) - 2));
+            $self->{_read_chunk} = sub { () } if eof($fh);
+            return [ unpack('H2', $code), $data ];
+        };
+    }
+
+    return $code.$length.$data;
+}
+
 1;
 
 __END__
@@ -37,8 +76,8 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.13 of Parse::AFP, released
-September 30, 2004.
+This document describes version 0.14 of Parse::AFP, released
+October 8, 2004.
 
 =head1 SYNOPSIS
 

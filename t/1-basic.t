@@ -1,6 +1,3 @@
-# $File: /local/member/autrijus/Parse-AFP//t/1-basic.t $ $Author: autrijus $
-# $Revision: #10 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
-
 use strict;
 use FindBin;
 use lib "$FindBin::Bin/../inc";

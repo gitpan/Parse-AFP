@@ -1,3 +1,9 @@
+[Changes for 0.14 - 2004-10-08]
+
+* In lazy-loading mode, AFP records are now read in one-by-one.
+* Remove RCS tags since we're now under SVK management.
+* Correct README to use the Perl license, not only GPL.
+
 [Changes for 0.13 - 2004-09-30]
 
 * udc4pca: Respects font resolution, instead of hardcoding on 300.

@@ -1,6 +1,4 @@
 #!/usr/bin/env perl
-# $File: /local/member/autrijus/Parse-AFP//Makefile.PL $ $Author: autrijus $
-# $Revision: #11 $ $Change: 3919 $ $DateTime: 2004-02-17T10:05:54.650889Z $
 
 use inc::Module::Install;
 

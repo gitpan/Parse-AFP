@@ -1,6 +1,3 @@
-# $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP/Record.pm $ $Author: autrijus $
-# $Revision: #7 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
-
 package Parse::AFP::Record;
 
 use base 'Parse::AFP::Base';

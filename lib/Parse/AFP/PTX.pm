@@ -1,6 +1,3 @@
-# $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP/PTX.pm $ $Author: autrijus $
-# $Revision: #7 $ $Change: 2431 $ $DateTime: 2004-02-19T22:41:00.737029Z $
-
 package Parse::AFP::PTX;
 use base 'Parse::AFP::Record';
 

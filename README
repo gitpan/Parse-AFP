@@ -1,6 +1,3 @@
-# $File: /local/member/autrijus/Parse-AFP//README $ $Author: autrijus $
-# $Revision: #5 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
-
 This is the README file for Parse::AFP, a module for parsing
 IBM's AFP (Advanced Function Printiner) files.
 
@@ -11,7 +8,7 @@ the module usage information.
 
 Parse::AFP uses the standard perl module install process:
 
-cpansign -v		# see SIGNATURE for details
+cpansign -v		# optional; see SIGNATURE for details
 perl Makefile.PL
 make			# or 'nmake' on Parse; see notes below
 make test
@@ -21,19 +18,5 @@ make install
 
 Copyright 2004 by Autrijus Tang <autrijus@autrijus.org>.
 
-Partly derived from Data::FixedFormat, (C) 2000,2002 Thomas Pfau.
-All rights reserved.
-
-This module is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.
-
-This library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this progam; if not, write to the Free Software Foundation,
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

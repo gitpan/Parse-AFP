@@ -1,7 +1,4 @@
 #!/usr/bin/perl
-# $File: /local/member/autrijus/Parse-AFP//t/0-signature.t $ $Author: autrijus $
-# $Revision: #4 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
-
 use strict;
 print "1..1\n";
 
