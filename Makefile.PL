@@ -9,11 +9,11 @@ author		('Autrijus Tang <autrijus@autrijus.org>');
 abstract	('IBM Advanced Function Printing Parser');
 license		('perl');
 version_from	('lib/Parse/AFP.pm');
-install_script	(<script/*.pl>);
+install_script	($_) for <script/*.pl>;
 
 requires	(
     'perl'	    => '5.8.2',
-    'Parse::Binary' => 0.07,
+    'Parse::Binary' => 0.08,
 );
 
 WriteAll( sign => 1 );

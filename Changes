@@ -1,3 +1,8 @@
+[Changes for 0.07 - 2004-09-09]
+
+* Reduced memory usage for script/* tools.
+* Depend on Parse::Binary 0.08 to further reduce memory usage.
+
 [Changes for 0.06 - 2004-09-08]
 
 * Corrected DBD::SQLite's BLOB usage in fontdb scripts.

@@ -23,32 +23,39 @@ die "Usage: $0 dir fonts.db\n" unless @ARGV >= 1 or -d 'dir';
 
 my $input = shift || 'dir';
 my $output = shift || 'fonts.db';
+my $file = shift;
+my $dbh;
 
 our (%GCG, %FNI, @FNM, $FNG);
 our ($FontName, $Rotation, $Resolution);
 
-unlink $output if $output;
+if (!$file) {
+    unlink $output if -e $output;
 
-my $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+    $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+    init_db();
+    $dbh->disconnect;
 
-init_db();
-
-foreach my $file (bsd_glob("$input/X0*.afp")) {
-    basename($file) =~ /^(X0([^.]+))/ or next;
-
-    $FontName = $1;
-    init_table();
-
-    my $name = $2;
-    print "Parsing font $name.";
-    Parse::AFP->new($file, { lazy => 1 })->callback_members([qw( CFC CFI )]);
-
-    $dbh->do(
-        "INSERT INTO Fonts VALUES (?, ?, ?, ?)", {},
-        $FontName, $Resolution, 0, 0
-    );
-    print "\n";
+    system($^X, $0, $input, $output, $_) for bsd_glob("$input/X0*.afp");
+    exit;
 }
+
+$dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+
+basename($file) =~ /^(X0([^.]+))/ or exit;
+$FontName = $1;
+
+$dbh->begin_work;
+init_table();
+
+my $name = $2;
+print "Parsing font $name.";
+Parse::AFP->new($file, { lazy => 1 })->callback_members([qw( CFC CFI )]);
+
+$dbh->do(
+    "INSERT INTO Fonts VALUES (?, ?, ?, ?)", {},
+    $FontName, $Resolution, 0, 0
+);
 
 $dbh->commit;
 $dbh->disconnect;
@@ -193,7 +200,6 @@ sub FNM {
 sub FNG { $FNG .= $_[0]->Data; }
 
 sub init_db {
-    $dbh->begin_work;
     $dbh->do('PRAGMA default_cache_size = 200000; ') or die $dbh->errstr;
     $dbh->do('PRAGMA default_synchronous = OFF; ') or die $dbh->errstr;
 

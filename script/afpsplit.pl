@@ -22,9 +22,10 @@ sub BR {
     my $name = substr($_[0]->Data, 0, 8);
     print "Writing to $output/$name.afp\n";
     $afp->set_output_file("$output/$name.afp");
+    $_[0]->remove;
 }
 
-sub ER { return }
+sub ER { $_[0]->remove }
 
 sub __ {
     $_[0]->write; $_[0]->remove;

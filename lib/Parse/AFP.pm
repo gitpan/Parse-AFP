@@ -2,7 +2,7 @@
 # $Revision: #10 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.06';
+$Parse::AFP::VERSION = '0.07';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -37,7 +37,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.06 of Parse::AFP, released September 8, 2004.
+This document describes version 0.07 of Parse::AFP, released September 9, 2004.
 
 =head1 SYNOPSIS
 
