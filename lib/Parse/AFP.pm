@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.14';
+$Parse::AFP::VERSION = '0.15';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -35,7 +35,7 @@ sub make_next_member {
     my $count = 0;
 
     sub {
-        undef $items->[$count++] if $count;
+        delete $items->[$count++] if $count;
         push @$items, &{$self->{_read_chunk}};
         goto &$code;
     };
@@ -55,15 +55,54 @@ sub read_file {
 
     if (!eof($fh)) {
         $self->{_read_chunk} = sub {
+            my (@data, $type, $pos, $buf);
+
             read($fh, $code, 1);
             read($fh, $length, 2);
-            read($fh, $data, (unpack('n', $length) - 2));
+
+            # We now cheat and skip unintereting types.
+            read($fh, $type, 3);
+
+            our %IgnoreType;
+            if (exists $IgnoreType{$type} and my $ofh = $self->{output}) {
+                # We now ignore everything...
+                read($fh, $buf, (unpack('n', $length) - 5));
+
+                print $ofh $code, $length, $type, $buf;
+                $self->{_read_chunk} = sub { () } if eof($fh);
+                goto &{$self->{_read_chunk}};
+            }
+
+            $data[0] = unpack('H2', $code);
+            seek($fh, -3, 1);
+            read($fh, $data[1], (unpack('n', $length) - 2));
             $self->{_read_chunk} = sub { () } if eof($fh);
-            return [ unpack('H2', $code), $data ];
+
+            return \@data;
         };
     }
 
     return $code.$length.$data;
+}
+
+sub callback_members {
+    my $self = shift;
+    $self->{callback_members} = { map { ($_ => 1) } @{$_[0]} };
+
+    our %IgnoreType;
+    local %IgnoreType;
+
+    if ($self->{callback_members}{'*'} and $self->{output}) {
+        my %table = reverse Parse::AFP::Record::DISPATCH_TABLE();
+        %IgnoreType = 
+            map { (pack('H6', $table{$_}) => 1) }
+            grep { !$self->{callback_members}{$_} }
+            keys %table;
+    }
+
+    while (my $member = $self->next_member) {
+	$member->callback(scalar caller, @_);
+    }
 }
 
 1;
@@ -76,8 +115,8 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.14 of Parse::AFP, released
-October 8, 2004.
+This document describes version 0.15 of Parse::AFP, released
+October 12, 2004.
 
 =head1 SYNOPSIS
 

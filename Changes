@@ -1,3 +1,8 @@
+[Changes for 0.15 - 2004-10-12]
+
+* On lazy evaluation with callback_members that includes '*', skip all
+  noninteresting callbacks and simply write them into the output file.
+
 [Changes for 0.14 - 2004-10-08]
 
 * In lazy-loading mode, AFP records are now read in one-by-one.
