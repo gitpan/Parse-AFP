@@ -10,13 +10,53 @@ use Data::Dumper;
 use Parse::AFP;
 use Getopt::Std;
 
-getopts('i:o:f:');
-my $input ||= shift;
-my $db ||= 'fonts.db' if -e 'fonts.db';
-my $output ||= 'fixed.afp';
-my @UDC;
+my %CodePages = (
+    947 => {
+        FillChar => "\xA1\x40",
+        FirstChar => "\xA4\x40",
+        CharPattern => qr{
+            (
+                [\x81-\xA0\xC7-\xC8\xFA-\xFE].      # UDC range 1
+                |
+                \xC6[\xA1-\xFE]                     # UDC range 2
+            )
+            |
+            ([\x00-\x7f])                           # Single Byte
+            |
+            (..)                                    # Double Byte
+        }x,
+    },
+    835 => {
+        FillChar => "\x40\x40",
+        FirstChar => "\x4C\x41",
+        CharPattern => qr{
+            ([\x92-\xFE].)                          # UDC
+            |
+            ((?!))                                  # Single Byte
+            |
+            ([\x41-\x91].)                          # Double Byte
+        }x,
+    },
+);
 
-die "Usage: $0 -i input.afp -o output.afp -f fonts.db\n" if grep !defined, $input, $db, $output;
+my %opts;
+getopts('i:o:f:c:d:', \%opts);
+
+my $input       = $opts{i} || shift;
+my $db          = $opts{f} || (-e 'fonts.db' ? 'fonts.db' : undef);
+my $output      = $opts{o} || 'fixed.afp';
+my $codepage    = $opts{c} || 947;
+my $dbcs_pat    = $opts{d};
+
+my @UDC;
+die "Usage: $0 -c [947|835] -d dbcs_pattern -i input.afp -o output.afp -f fonts.db\n"
+    if grep !defined, $input, $db, $output;
+
+$CodePages{$codepage} or die "Unknown codepage: $codepage";
+
+my ($FillChar, $FirstChar, $CharPattern)
+    = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern )};
+
 
 my (%FontToId, %IdToFont);
 
@@ -135,15 +175,29 @@ sub PTX_TRN {
 
     my $font_eid = $$font_ref;
     my $font_name = $IdToFont{$font_eid};
+    $font_name =~ s/^X\d/X0/;
 
     my $string = $dat->Data;
     my $data = '';
 
+    # if $font_name is single byte...
+    # simply add increments together without parsing UDC
+    if ($dbcs_pat and $font_name !~ /$dbcs_pat/o) {
+        $Increment{$font_name} ||= { @{
+            $dbh->selectcol_arrayref(
+            "SELECT Character, Increment FROM $font_name",
+            { Columns=>[1, 2] }
+        )} };
+        $x += $Increment{$font_name}{$_}
+            or die "Cannot find char ".unpack('(H2)*', $_)." in $font_name"
+                foreach split(//, $string);
+        return;
+    }
+
     # my $dbcs_space_char = "\xFA\x40";
 
-    while ($string =~ /([\x81-\xA0\xC7-\xC8\xFA-\xFE].|\xC6[\xA1-\xFE])|([\x00-\x7f])|(..)/g) {
+    while ($string =~ /$CharPattern/go) {
         # ... calculate position, add to fonts to write ...
-
         if ( $1 || $3 ) {
 	    $Increment{$font_name} ||= { @{
 		$dbh->selectcol_arrayref(
@@ -159,7 +213,7 @@ sub PTX_TRN {
                 Character => $1,
                 FontName => $font_name
             };
-            $data .= "\xA1\x40";
+            $data .= $FillChar;
 	    $x += $Increment{$font_name}{$1};
 	}
 	elsif (defined $2) {
@@ -176,7 +230,7 @@ sub PTX_TRN {
 	}
 	else {
 	    $data .= $3;
-	    $x += $Increment{$font_name}{$3};
+	    $x += $Increment{$font_name}{$3} || $Increment{$font_name}{$FirstChar};
 	}
     }
     $dat->{struct}{Data} = $data;
@@ -212,6 +266,16 @@ sub EPG {
 	YOffset => 0,
 	YOrientation => $YOrientation,
     )->write;
+
+    use YAML;
+
+    my %res = @{$dbh->selectcol_arrayref(
+        "SELECT FontName, Resolution FROM Fonts", { Columns => [1,2] }
+    )};
+    my $name = $UDC[0]{FontName};
+    $name =~ s/\s//g;
+    my $res = $res{$name};
+
     $rec->spawn_obj(
 	Class => 'IID',
 	Color => '0008',
@@ -221,11 +285,11 @@ sub EPG {
 	XBase => '00',
 	XCellSizeDefault => 0,
 	XSize => 0,
-	XUnits => 3000, # XXX - get from Fonts
+	XUnits => $res,
 	YBase => '00',
 	YCellSizeDefault => 0,
 	YSize => 0,
-	YUnits => 3000,
+	YUnits => $res,
     )->write;
 
     foreach my $char (@UDC) {

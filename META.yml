@@ -1,5 +1,5 @@
 name: Parse-AFP
-version: 0.12
+version: 0.13
 abstract: IBM Advanced Function Printing Parser
 author: Autrijus Tang <autrijus@autrijus.org>
 license: perl

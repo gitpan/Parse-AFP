@@ -14,22 +14,22 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 b028b713defe56d69fa19b5a20f849c34c853bb5 Changes
+SHA1 15d1bdb7d18809489f7cef597c7c862faf6c04b4 Changes
 SHA1 f30e8d6df05d424670c85387bdb9ca967de665e3 MANIFEST
 SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 ec5da09aa08cb897fa8feab7e4585854579bb024 META.yml
+SHA1 90f59b22ae248c70be3daa8625bbf7778d8ce029 META.yml
 SHA1 11f78b94eaba85f975d74f2d721b64345db9cad5 Makefile.PL
 SHA1 74f88204e791fc72c7d197cbdf011044d0225f2a README
-SHA1 b26ac27e5a57677aa210c0e908b28ff3ba28f03b inc/Module/Install.pm
-SHA1 fd56d5c793014bccac2cd1e61926c4da8538ef99 inc/Module/Install/Base.pm
-SHA1 9ce6768a7b8f7032ec89594b773fafd58c6feb1d inc/Module/Install/Can.pm
-SHA1 b6c8f0f22c4c8ba48a7bac2c5e4bd61803a7b097 inc/Module/Install/Fetch.pm
-SHA1 aabcd47178e4e7b27e340ff5273269c93697c9c1 inc/Module/Install/Makefile.pm
-SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
-SHA1 48ea7ce20a63ff1583036d6c4b8fd8e4c24457e6 inc/Module/Install/Scripts.pm
-SHA1 aff9341a15c04faec47089851e43d9d4061337e7 inc/Module/Install/Win32.pm
-SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 1353e883c4d0669fa58a8d9049128c5d457f8e62 lib/Parse/AFP.pm
+SHA1 02597776ad22aacd2c8e189594fcbf701390b606 inc/Module/Install.pm
+SHA1 7ca8b8f54287c2b5af8062fc9f349275a07e06f3 inc/Module/Install/Base.pm
+SHA1 b6af22816210f8eaab4c2c616e05a8892b2fcfd0 inc/Module/Install/Can.pm
+SHA1 33659c004518e95afb6ffafad41e84f2a6268412 inc/Module/Install/Fetch.pm
+SHA1 c4ed10cd20914c04f3fff3f8aaf8943372cec114 inc/Module/Install/Makefile.pm
+SHA1 ccf9b6267b5c9e7b35ef129f7e974255955c8867 inc/Module/Install/Metadata.pm
+SHA1 a7eaeed7eaafe52c91298b0fe6959371c0b7639a inc/Module/Install/Scripts.pm
+SHA1 1288f4c4e4ba88e19194d7952eacbd6be2a5b916 inc/Module/Install/Win32.pm
+SHA1 1022a7ab797fc0081ea947f102650362ad925d7a inc/Module/Install/WriteAll.pm
+SHA1 778c20551e61c2a499f7b67d2af9043285e9fa87 lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -105,7 +105,7 @@ SHA1 befc1bc79c77c84a62cc5c0ecfb9c0c22f7b1293 lib/Parse/AFP/FNG.pm
 SHA1 cb50fbd7ab198ab4bf0e0b85f572bc12bfe6e985 lib/Parse/AFP/FNI.pm
 SHA1 26d3d6f46b62a43ac223a99322f1363c0a6f419e lib/Parse/AFP/FNM.pm
 SHA1 8e1f35af7d5043230baa7853f8dd4ab006a93c32 lib/Parse/AFP/FNN.pm
-SHA1 be26eb3abdcad7a3dba1b981e08b08e7c041ff3f lib/Parse/AFP/FNO.pm
+SHA1 4ba3c2c011729a5cc4b3840abc6f97269bd6b675 lib/Parse/AFP/FNO.pm
 SHA1 6845f9be4062c6dc05ae7a7815753fc5399b7177 lib/Parse/AFP/FNP.pm
 SHA1 21878159da36c12edea223b99b27e250c9db4768 lib/Parse/AFP/GAD.pm
 SHA1 676f4170c087a6acb9351a454554274a5efe7fb0 lib/Parse/AFP/GDD.pm
@@ -238,17 +238,17 @@ SHA1 80739d2b2134cc68c567e267b6755da39b934e22 lib/Parse/AFP/Triplet/TS.pm
 SHA1 5c1a2cc3ef01f0e5768383c978feebc55150004d lib/Parse/AFP/Triplet/UDTS.pm
 SHA1 f7e646fc90bc147c0d23cba72d8682f0c1fe4497 script/afpconv.pl
 SHA1 ccdc7c5c7274544da77cecaa4e13880186c7bc34 script/afpdump.pl
-SHA1 7def54d65e63ee3b47c17ca3ac64b537fab22cb1 script/afpmkfontdb.pl
+SHA1 727a2cdb60eda9afc891afeb45a765067d923847 script/afpmkfontdb.pl
 SHA1 6770217a1d79ce0637373e30ef5d7e6eed2f230a script/afpsplit.pl
 SHA1 2460f2ac28176f0f97e321b6310d7aeb5d3d7509 script/afpviewfontdb.pl
-SHA1 76293dde9ba3eb45f776afeb9b8fc64b0a54a9d9 script/udc4pca.pl
+SHA1 25aada53c591751b5a6608a6fa438af9cbffef50 script/udc4pca.pl
 SHA1 66037a2f6b3266884223d4c9515f5a06930f6181 t/0-signature.t
 SHA1 3af5e6e80364a5dfadfec8002cabc7dccf25ebef t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBUptJtLPdNzw1AaARAqefAJ0bfzU2oJyN4Eu5djbaV7aBK15PuQCgtkge
-ObFN++SUT4adQK86xcqb6BI=
-=gQxZ
+iD8DBQFBXCAOtLPdNzw1AaARAnn1AJwNS1ngXD/5r3fvCbD59FZe2CBf6ACgoGgG
+JH7iAW6QBO4vv7WXgJsbk7w=
+=8GBf
 -----END PGP SIGNATURE-----

@@ -26,7 +26,7 @@ my $output = shift || 'fonts.db';
 my $file = shift;
 my $dbh;
 
-our (%GCG, %FNI, @FNM, $FNG);
+our (%GCG, %FNI, %SpaceIncrement, @FNM, $FNG);
 our ($FontName, $Rotation, $Resolution);
 
 if (!$file) {
@@ -70,6 +70,42 @@ $dbh->do(
 );
 
 $dbh->commit;
+
+# Heuristic: If there is no "\x40" <= 3, fill in a fake record
+my @has_0x40 = @{$dbh->selectcol_arrayref(
+    "SELECT Width FROM $FontName WHERE Character = '\x40'"
+)||[]};
+
+if (!@has_0x40 and my $inc = $SpaceIncrement{'0000'}{$FontName}) {
+    $dbh->begin_work;
+
+    $dbh->do(
+        "INSERT INTO $FontName VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", {},
+        "\x40",
+        $inc,
+        0, 0,
+        0, $inc, 0, 0,
+        '',
+        $inc,
+        $inc,
+    );
+
+    foreach my $rotation (qw( 2D 5A 87 )) {
+        my $rot_inc = $SpaceIncrement{$rotation.'00'}{$FontName} or next;
+        my $angle = hex($rotation) * 2;
+        $dbh->do(
+            "INSERT INTO RotationInfo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", {},
+            "\x40",
+            $rot_inc,
+            0, 0,
+            0, $rot_inc, 0, 0,
+            $FontName, $angle
+        );
+    }
+
+    $dbh->commit;
+}
+
 $dbh->disconnect;
 
 print "\n";
@@ -93,7 +129,7 @@ sub CFI {
         $fcs_name = "$input/".Encode::decode( cp500 => $fcs_name ).".afp";
 
         Parse::AFP->new($cp_name, { lazy => 1 })->callback_members([qw( CPC CPI )]);
-        Parse::AFP->new($fcs_name, { lazy => 1 })->callback_members([qw( FNC FNI FNM FNG )]);
+        Parse::AFP->new($fcs_name, { lazy => 1 })->callback_members([qw( FNC FNI FNM FNG FNO )]);
 
         write_record($section); 
 
@@ -212,6 +248,11 @@ sub FNM {
 }
 
 sub FNG { $FNG .= $_[0]->Data; }
+
+sub FNO {
+    $SpaceIncrement{$_[0]->CharacterRotation}{$FontName}
+        = $_[0]->SpaceCharacterIncrement;
+}
 
 sub init_db {
     $dbh->do('PRAGMA default_cache_size = 200000; ') or die $dbh->errstr;

@@ -1,3 +1,10 @@
+[Changes for 0.13 - 2004-09-30]
+
+* udc4pca: Respects font resolution, instead of hardcoding on 300.
+* udc4pca: EBCDIC documents are respected.
+* udc4pca: Space increments from FNO is now handled.
+* New partial FNO parsing subclass.
+
 [Changes for 0.12 - 2004-09-23]
 
 * UDC detection logic in udc4pca.pl fixed with regards to the Big5 range.
