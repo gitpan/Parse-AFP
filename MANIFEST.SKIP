@@ -1,0 +1,8 @@
+#defaults
+^MANIFEST.bak$
+^Makefile$
+^Makefile.old$
+^blib/
+^etc/
+^pm_to_blib$
+^blibdirs$
