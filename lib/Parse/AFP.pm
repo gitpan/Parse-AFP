@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.16';
+$Parse::AFP::VERSION = '0.17';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -45,7 +45,7 @@ sub read_file {
     open my $fh, "< $file" or die "Cannot open $file for reading: $!";
     binmode($fh);
 
-    if ($self->{lazy} and $self->{output_file}) {
+    if (ref($self) and $self->{lazy} and $self->{output_file}) {
         $self->{input} = $fh;
         $self->set_output_file($self->{output_file});
         return '';
@@ -96,7 +96,9 @@ sub tight_loop {
 
         # Do Something Interesting with $header and $buf
         $is_dirty = 0;
-        Parse::AFP::Record->new( \$buf, $attr )->callback($callback, @_);
+        Parse::AFP::Record->new( \$buf, $attr )
+                          ->callback($callback, @_, \$buf);
+        # $ofh = $self->{output};
         print $ofh $buf unless $is_dirty;
         next;
     }
@@ -112,7 +114,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.16 of Parse::AFP, released
+This document describes version 0.17 of Parse::AFP, released
 October 12, 2004.
 
 =head1 SYNOPSIS

@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 f073ac90fc9801f7e772692154d36e70869564bd Changes
+SHA1 269040500af0d9b7974316b6e60fc47f9f6aeb48 Changes
 SHA1 f30e8d6df05d424670c85387bdb9ca967de665e3 MANIFEST
 SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 edb2413f5019b9fadd27ba6661148a93ba40570d META.yml
+SHA1 a204158fa0d9a58c2b17dfd862fe8961643658c0 META.yml
 SHA1 48563520acfae046047870db44bc21a3496a8b15 Makefile.PL
 SHA1 aa25dcaf6b3b634affbd2a9c41faec90655b07a7 README
 SHA1 02597776ad22aacd2c8e189594fcbf701390b606 inc/Module/Install.pm
@@ -29,7 +29,7 @@ SHA1 ccf9b6267b5c9e7b35ef129f7e974255955c8867 inc/Module/Install/Metadata.pm
 SHA1 a7eaeed7eaafe52c91298b0fe6959371c0b7639a inc/Module/Install/Scripts.pm
 SHA1 1288f4c4e4ba88e19194d7952eacbd6be2a5b916 inc/Module/Install/Win32.pm
 SHA1 1022a7ab797fc0081ea947f102650362ad925d7a inc/Module/Install/WriteAll.pm
-SHA1 dbc8a378d9db8d46e522a8de297640dafabc0bdb lib/Parse/AFP.pm
+SHA1 cecc0017c41aa9b5143bfa5c19c538f9079ed4ca lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -241,14 +241,14 @@ SHA1 ccdc7c5c7274544da77cecaa4e13880186c7bc34 script/afpdump.pl
 SHA1 727a2cdb60eda9afc891afeb45a765067d923847 script/afpmkfontdb.pl
 SHA1 6770217a1d79ce0637373e30ef5d7e6eed2f230a script/afpsplit.pl
 SHA1 2460f2ac28176f0f97e321b6310d7aeb5d3d7509 script/afpviewfontdb.pl
-SHA1 98fa775daa8a3127f6f03119e48e2522688c3c47 script/udc4pca.pl
+SHA1 00f6dcd01ecfdfc20764a348b324d26b092153c1 script/udc4pca.pl
 SHA1 f3e7309996c4de9a7e05ded43499dcdbf92aa428 t/0-signature.t
 SHA1 f97124d125dd9ac1fda2e45bc5dd6d678d2b72a0 t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBa580tLPdNzw1AaARAvo/AJ9xn9YOnEXmJoEWTTlAchMBGf4lcACaAzK0
-ESXzsX5YMt9z4tadp5HEcIo=
-=LeYw
+iD8DBQFBa+E8tLPdNzw1AaARAqWdAKCkszOfCjLzCMK23iW509ONVcyQWwCeKap3
+ryNyvgArMZkPvhfuV5ZJ13Q=
+=6t3E
 -----END PGP SIGNATURE-----

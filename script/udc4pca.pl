@@ -25,6 +25,15 @@ my %CodePages = (
             |
             (..)                                    # Double Byte
         }x,
+        NoUDC => qr{^
+            (?:
+                [\x00-\x7f]+
+            |
+                (?:[\xA1-\xC5\xC9-\xF9].)+
+            |
+                (?:\xC6[^\xA1-\xFE])+
+            )*
+        $}x
     },
     835 => {
         FillChar => "\x40\x40",
@@ -36,6 +45,9 @@ my %CodePages = (
             |
             ([\x41-\x91].)                          # Double Byte
         }x,
+        NoUDC => qr{^
+            [^\x92-\xFE]*
+        $}x
     },
 );
 
@@ -54,8 +66,8 @@ die "Usage: $0 -c [947|835] -d dbcs_pattern -i input.afp -o output.afp -f fonts.
 
 $CodePages{$codepage} or die "Unknown codepage: $codepage";
 
-my ($FillChar, $FirstChar, $CharPattern)
-    = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern )};
+my ($FillChar, $FirstChar, $CharPattern, $NoUDC)
+    = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern NoUDC )};
 
 
 my (%FontToId, %IdToFont);
@@ -80,6 +92,7 @@ sub PGD {
     $XPageSize = $rec->XPageSize;
     $YPageSize = $rec->YPageSize;
     $rec->write; $rec->remove;
+    print STDERR ".";
 }
 
 sub MCF1 {
@@ -119,11 +132,30 @@ sub Triplet_RLI {
 }
 
 sub PTX {
-    my $rec = shift;
+    my ($rec, $buf) = @_;
     my $font_eid;
-    # print STDERR '.';
-    $rec->callback_members([map "PTX::$_", qw(SIM SBI STO SCFL AMI AMB BLN TRN)], \$font_eid);
-    $rec->refresh; 
+
+    # Now iterate over $$buf.
+    my $pos = 2;
+    my $len = length($$buf);
+
+    while ($pos < $len) {
+        my ($size, $code) = unpack("x${pos}CC", $$buf);
+        $size or last;
+
+        if ($code == 0xDA or $code == 0xDB) {
+            if (substr($$buf, $pos + 2, $size - 2) !~ $NoUDC) {
+                $rec->callback_members([map "PTX::$_", qw(
+                    SIM SBI STO SCFL AMI AMB BLN TRN
+                )], \$font_eid);
+                $rec->refresh;
+                last;
+            }
+        }
+
+        $pos += $size;
+    }
+
     $rec->write; $rec->remove;
 }
 
