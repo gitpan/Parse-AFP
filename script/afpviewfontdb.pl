@@ -11,14 +11,14 @@ die "Usage: $0 fonts.db\n" unless @ARGV >= 1 or -e 'fonts.db';
 
 my $input = shift || 'fonts.db';
 my $dbh = DBI->connect("dbi:SQLite:dbname=$input") or die $DBI::errstr;
-my $fonts = $dbh->selectall_arrayref("SELECT FontName, FixedWidth, FixedHeight FROM Fonts")
+my $fonts = $dbh->selectall_arrayref("SELECT FontName, FixedWidth, FixedHeight, Resolution FROM Fonts")
   or die $dbh->errstr;
 
 while (1) {
     for (1 .. @$fonts) {
-        my ($name, $width, $height) = @{$fonts->[$_-1]};
+        my ($name, $width, $height, $resolution) = @{$fonts->[$_-1]};
         my $dimension = ($width ? "$width * $height" : 'variable width');
-        print "$_: $name - $dimension\n";
+        print "$_: $name - $resolution - $dimension\n";
     }
     print "Choose a font to display: ";
     my $choice = int(<STDIN>) or exit;

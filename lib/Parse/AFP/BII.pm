@@ -7,5 +7,7 @@ use base 'Parse::AFP::Record';
 use constant SUBFORMAT => (
     ImageObjectName => 'a8',
 );
+use constant ENCODED_FIELDS => ('ImageObjectName');
+use constant ENCODING => 'cp500';
 
 1;

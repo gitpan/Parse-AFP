@@ -97,4 +97,12 @@ sub validate_memberdata {
     } @$field;
 }
 
+sub spawn_obj {
+    my $self = shift;
+    my $obj = $self->spawn(CC => '5a', @_);
+    @{$obj}{qw( lazy output )} = @{$self}{qw( lazy output )};
+    $obj->refresh;
+    return $obj;
+}
+
 1;

@@ -29,10 +29,10 @@ sub prompt_script {
 }
 
 sub install_script {
-    my $self = shift;
+    my ($self, $script_file) = @_;
     my $args = $self->makemaker_args;
     my $exe_files = $args->{EXE_FILES} ||= [];
-    push @$exe_files, @_;
+    push @$exe_files, $script_file;
 }
 
 sub _read_script {

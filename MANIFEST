@@ -207,6 +207,7 @@ script/afpdump.pl
 script/afpmkfontdb.pl
 script/afpsplit.pl
 script/afpviewfontdb.pl
+script/udc4pca.pl
 SIGNATURE
 t/0-signature.t
 t/1-basic.t

@@ -4,9 +4,37 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
 
-use encoding 'utf8';
+# XXX - use encoding 'utf8' cannot be used as it interferes with code parsing
+#       resulting in inconsistent utf8 flag on all of the @ARGV!
+#use encoding 'utf8';
+#utf8::upgrade($_) for @ARGV; # XXX black, black voodoo magic
+
 use File::Basename;
 use Parse::AFP;
+use Encode::IBM;
+use Encode::Guess;
+use Getopt::Std;
+
+binmode(STDIN, ':utf8');
+binmode(STDOUT, ':utf8');
+
+$Encode::Guess::NoUTFAutoGuess = 1;
+use vars qw/$opt_e/; getopts('e:');
+Encode::Guess->set_suspects(split(/\s*,\s*/, ($opt_e || 'cp500,ibm-835')));
+
+=head1 NAME
+
+adpdump.pl - Dump IBM AFP data to HTML
+
+=head1 SYNOPSIS
+
+    # Defaults to "cp500, ibm-835" encoding
+    % afpdump.pl input.afp > output.html
+
+    # For Big5-encoded AFPs
+    % afpdump -e cp437,ibm-947 big5.afp > output.html
+
+=cut
 
 my %desc;
 foreach my $type qw( Record Triplet PTX/ControlSequence ) {
@@ -19,9 +47,10 @@ foreach my $type qw( Record Triplet PTX/ControlSequence ) {
 }
 
 sub Header ();
-sub Parse::AFP::PTX::TRN::ENCODING () { 'big5' };
+sub Parse::AFP::PTX::TRN::ENCODING () { 'Guess' };
 
-die "Usage: $0 file.afp > file.html\n" unless @ARGV;
+die "Usage: $0 [ -e codepage1,codepage2... ] file.afp > file.html\n"
+  unless @ARGV;
 
 $SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
 $SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
@@ -46,8 +75,8 @@ sub dump_afp {
 	next if ref $struct->{$key};
 	length($x = $struct->{$key}) or next;
 
-	if ($obj->ENCODING and $key eq 'Data') {
-	    $x = $obj->Data;
+	if ($obj->ENCODING and grep { $key eq $_ } $obj->ENCODED_FIELDS) {
+	    $x = $obj->$key;
 	    $x = qq("$x");
 	}
 	elsif ($x =~ /[^\w\s]/) {
@@ -101,3 +130,95 @@ div { text-decoration: underline; background: #e0e0ff; font-family: arial unicod
 .
 
 1;
+
+no warnings 'redefine';
+package Encode::Guess;
+sub guess {
+    my $class = shift;
+    my $obj   = ref($class) ? $class : $Encode::Encoding{$Canon};
+    my $octet = shift;
+
+    # sanity check
+    return unless defined $octet and length $octet;
+
+    # cheat 0: utf8 flag;
+    if ( Encode::is_utf8($octet) ) {
+	return find_encoding('utf8') unless $NoUTFAutoGuess;
+	Encode::_utf8_off($octet);
+    }
+    # cheat 1: BOM
+    use Encode::Unicode;
+    unless ($NoUTFAutoGuess) {
+	my $BOM = unpack('n', $octet);
+	return find_encoding('UTF-16')
+	    if (defined $BOM and ($BOM == 0xFeFF or $BOM == 0xFFFe));
+	$BOM = unpack('N', $octet);
+	return find_encoding('UTF-32')
+	    if (defined $BOM and ($BOM == 0xFeFF or $BOM == 0xFFFe0000));
+	if ($octet =~ /\x00/o){ # if \x00 found, we assume UTF-(16|32)(BE|LE)
+	    my $utf;
+	    my ($be, $le) = (0, 0);
+	    if ($octet =~ /\x00\x00/o){ # UTF-32(BE|LE) assumed
+		$utf = "UTF-32";
+		for my $char (unpack('N*', $octet)){
+		    $char & 0x0000ffff and $be++;
+		    $char & 0xffff0000 and $le++;
+		}
+	    }else{ # UTF-16(BE|LE) assumed
+		$utf = "UTF-16";
+		for my $char (unpack('n*', $octet)){
+		    $char & 0x00ff and $be++;
+		    $char & 0xff00 and $le++;
+		}
+	    }
+	    DEBUG and warn "$utf, be == $be, le == $le";
+	    $be == $le 
+		and return
+		    "Encodings ambiguous between $utf BE and LE ($be, $le)";
+	    $utf .= ($be > $le) ? 'BE' : 'LE';
+	    return find_encoding($utf);
+	}
+    }
+    my %try =  %{$obj->{Suspects}};
+    for my $c (@_){
+	my $e = find_encoding($c) or die "Unknown encoding: $c";
+	$try{$e->name} = $e;
+	DEBUG and warn "Added: ", $e->name;
+    }
+    my $nline = 1;
+    for my $line (split /\r\n?|\n/, $octet){
+	# cheat 2 -- \e in the string
+	if ($line =~ /\e/o){
+	    my @keys = keys %try;
+	    delete @try{qw/utf8 ascii/};
+	    for my $k (@keys){
+		ref($try{$k}) eq 'Encode::XS' and delete $try{$k};
+	    }
+	}
+	my %ok = %try;
+	# warn join(",", keys %try);
+	for my $k (keys %try){
+	    my $scratch = $line;
+	    $try{$k}->decode($scratch, FB_QUIET);
+	    if ($scratch eq ''){
+		DEBUG and warn sprintf("%4d:%-24s ok\n", $nline, $k);
+	    }else{
+		use bytes ();
+		DEBUG and 
+		    warn sprintf("%4d:%-24s not ok; %d bytes left\n", 
+				 $nline, $k, bytes::length($scratch));
+		delete $ok{$k};
+	    }
+	}
+	%ok or return "No appropriate encodings found!";
+	if (scalar(keys(%ok)) >= 1){
+	    my ($retval) = sort values(%ok);
+	    return $retval;
+	}
+	%try = %ok; $nline++;
+    }
+    $try{ascii} or 
+	return  "Encodings too ambiguous: ", join(" or ", keys %try);
+    return $try{ascii};
+}
+

@@ -14,7 +14,7 @@ use constant FORMAT => (
     FontCharacterSetName	=> 'a8',
     CharacterRotation		=> 'n',
 );
-use constant ENCODED_FIELD => ('CodedFontName');
+use constant ENCODED_FIELDS => ('CodedFontName');
 use constant ENCODING => 'cp500';
 
 1;
