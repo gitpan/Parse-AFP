@@ -1,8 +1,8 @@
-# $File: //member/autrijus/.vimrc $ $Author: autrijus $
-# $Revision: #14 $ $Change: 4137 $ $DateTime: 2003/02/08 11:41:59 $
+# $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP.pm $ $Author: autrijus $
+# $Revision: #12 $ $Change: 3946 $ $DateTime: 2004-02-17T19:42:57.384625Z $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.03';
+$Parse::AFP::VERSION = '0.04';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -24,7 +24,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.03 of Parse::AFP, released February 14, 2004.
+This document describes version 0.04 of Parse::AFP, released February 18, 2004.
 
 =head1 SYNOPSIS
 

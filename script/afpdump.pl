@@ -1,8 +1,13 @@
 #!/usr/local/bin/perl
+# $File: /local/member/autrijus/Parse-AFP//script/afpdump.pl $ $Author: autrijus $
+# $Revision: #6 $ $Change: 3946 $ $DateTime: 2004-02-17T19:42:57.384625Z $
 
 use FindBin;
-use lib "$FindBin::Bin/lib";
 use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../../Parse-Binary/lib";
+
+$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
+$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
 use encoding 'utf8';
 use File::Basename;
@@ -24,13 +29,12 @@ print "</ol></body></html>\n";
 
 sub dump_afp {
     my $obj = shift;
-    my $struct = $obj->{Struct};
+    my $struct = $obj->struct;
     print "<table border=0 summary='$obj'>";
     foreach my $key (sort keys %$struct) {
-	next if $key eq 'MemberData';
-	length($struct->{$key}) or next;
+	next if $key =~ /^_/ or ref $struct->{$key};
+	length($x = $struct->{$key}) or next;
 
-	$x = $struct->{$key};
 	if ($obj->ENCODING and $key eq 'Data') {
 	    $x = $obj->Data;
 	    $x = qq("$x");

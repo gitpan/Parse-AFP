@@ -1,12 +1,12 @@
 name: Parse-AFP
-version: 0.03
+version: 0.04
 abstract: IBM Advanced Function Printing Parser
 author: Autrijus Tang <autrijus@autrijus.org>
 license: perl
 distribution_type: module
 requires:
   perl: 5.8.2
-  Parse::Binary: 0.01
+  Parse::Binary: 0.06
 no_index:
   directory:
     - inc

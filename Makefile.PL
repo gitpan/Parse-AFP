@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# $File: //member/autrijus/Win32-Exe/Makefile.PL $ $Author: autrijus $
-# $Revision: #2 $ $Change: 9927 $ $DateTime: 2004/02/06 19:31:24 $
+# $File: /local/member/autrijus/Parse-AFP//Makefile.PL $ $Author: autrijus $
+# $Revision: #11 $ $Change: 3919 $ $DateTime: 2004-02-17T10:05:54.650889Z $
 
 use inc::Module::Install;
 
@@ -13,7 +13,7 @@ install_script	(<script/*.pl>);
 
 requires	(
     'perl'	    => '5.8.2',
-    'Parse::Binary' => 0.01,
+    'Parse::Binary' => 0.06,
 );
 
 WriteAll( sign => 1 );

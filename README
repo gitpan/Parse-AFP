@@ -1,5 +1,5 @@
-# $File: //member/autrijus/Parse-AFP/README $ $Author: autrijus $
-# $Revision: #2 $ $Change: 9927 $ $DateTime: 2004/02/06 19:31:24 $
+# $File: /local/member/autrijus/Parse-AFP//README $ $Author: autrijus $
+# $Revision: #5 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
 
 This is the README file for Parse::AFP, a module for parsing
 IBM's AFP (Advanced Function Printiner) files.

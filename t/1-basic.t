@@ -1,8 +1,11 @@
-# $File: //member/autrijus/.vimrc $ $Author: autrijus $
-# $Revision: #14 $ $Change: 4137 $ $DateTime: 2003/02/08 11:41:59 $
+# $File: /local/member/autrijus/Parse-AFP//t/1-basic.t $ $Author: autrijus $
+# $Revision: #10 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
 
 use strict;
 use FindBin;
+use lib "$FindBin::Bin/../inc";
+use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../../Parse-Binary/lib";
 use Test::More tests => 20;
 
 $SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };

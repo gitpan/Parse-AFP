@@ -1,7 +1,9 @@
-# $File: //member/autrijus/.vimrc $ $Author: autrijus $
-# $Revision: #14 $ $Change: 4137 $ $DateTime: 2003/02/08 11:41:59 $
+# $File: /local/member/autrijus/Parse-AFP/lib/Parse/AFP/Base.pm $ $Author: autrijus $
+# $Revision: #18 $ $Change: 3921 $ $DateTime: 2004-02-17T11:17:10.383551Z $
 
 package Parse::AFP::Base;
+
+use strict;
 use base 'Parse::Binary';
 use constant BASE_CLASS => 'Parse::AFP';
 use constant DEFAULT_ARGS => ( Length => 0 );
@@ -94,6 +96,5 @@ sub validate_memberdata {
     $self->set_field_arrayref($field, \@members );
     return @members;
 }
-
 
 1;
