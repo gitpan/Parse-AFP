@@ -261,7 +261,7 @@ CREATE TABLE $FontName (
     CSpace          INTEGER,
     BaseOffset      INTEGER,
 
-    Bitmap          VARCHAR(255),
+    Bitmap          LONGBLOB,
 
     Width           INTEGER,
     Height          INTEGER

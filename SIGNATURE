@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 0f4be64d6aaee4fb3ac305d3ce1b7120dac48a15 Changes
+SHA1 b028b713defe56d69fa19b5a20f849c34c853bb5 Changes
 SHA1 f30e8d6df05d424670c85387bdb9ca967de665e3 MANIFEST
 SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 02ff297aa4cc6ff9f9d71bc5140bf49e512f4043 META.yml
+SHA1 ec5da09aa08cb897fa8feab7e4585854579bb024 META.yml
 SHA1 11f78b94eaba85f975d74f2d721b64345db9cad5 Makefile.PL
 SHA1 74f88204e791fc72c7d197cbdf011044d0225f2a README
 SHA1 b26ac27e5a57677aa210c0e908b28ff3ba28f03b inc/Module/Install.pm
@@ -29,7 +29,7 @@ SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
 SHA1 48ea7ce20a63ff1583036d6c4b8fd8e4c24457e6 inc/Module/Install/Scripts.pm
 SHA1 aff9341a15c04faec47089851e43d9d4061337e7 inc/Module/Install/Win32.pm
 SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 f3f0133a79d0a2a14b10dea11db3bd71cee83e0a lib/Parse/AFP.pm
+SHA1 1353e883c4d0669fa58a8d9049128c5d457f8e62 lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -238,17 +238,17 @@ SHA1 80739d2b2134cc68c567e267b6755da39b934e22 lib/Parse/AFP/Triplet/TS.pm
 SHA1 5c1a2cc3ef01f0e5768383c978feebc55150004d lib/Parse/AFP/Triplet/UDTS.pm
 SHA1 f7e646fc90bc147c0d23cba72d8682f0c1fe4497 script/afpconv.pl
 SHA1 ccdc7c5c7274544da77cecaa4e13880186c7bc34 script/afpdump.pl
-SHA1 a56a245237c31275841f9b4dc065d8f7c1505352 script/afpmkfontdb.pl
+SHA1 7def54d65e63ee3b47c17ca3ac64b537fab22cb1 script/afpmkfontdb.pl
 SHA1 6770217a1d79ce0637373e30ef5d7e6eed2f230a script/afpsplit.pl
 SHA1 2460f2ac28176f0f97e321b6310d7aeb5d3d7509 script/afpviewfontdb.pl
-SHA1 7204ed98eba4594a613b12815b113c58b5d59633 script/udc4pca.pl
+SHA1 76293dde9ba3eb45f776afeb9b8fc64b0a54a9d9 script/udc4pca.pl
 SHA1 66037a2f6b3266884223d4c9515f5a06930f6181 t/0-signature.t
 SHA1 3af5e6e80364a5dfadfec8002cabc7dccf25ebef t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBUQpVtLPdNzw1AaARAvFRAJ9Anjf5/S2g2JJIQBJ4LJjrMK7fcQCfY3MU
-fJxb9Z+jsNreVC3Nc2Kgs3w=
-=ZyYZ
+iD8DBQFBUptJtLPdNzw1AaARAqefAJ0bfzU2oJyN4Eu5djbaV7aBK15PuQCgtkge
+ObFN++SUT4adQK86xcqb6BI=
+=gQxZ
 -----END PGP SIGNATURE-----

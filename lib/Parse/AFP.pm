@@ -2,7 +2,7 @@
 # $Revision: #10 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.11';
+$Parse::AFP::VERSION = '0.12';
 
 use strict;
 use base 'Parse::AFP::Base';

@@ -1,8 +1,4 @@
 #!/usr/local/bin/perl
-
-eval 'exec /usr/local/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
@@ -142,21 +138,29 @@ sub PTX_TRN {
 
     my $string = $dat->Data;
     my $data = '';
-    my $dbcs_increment = 0; # only for DBCS
 
-    while ($string =~ /([\x81-\xA0\xC6-\xC8\xFA-\xFE].)|([\x00-\x7f])|(..)/g) {
+    # my $dbcs_space_char = "\xFA\x40";
+
+    while ($string =~ /([\x81-\xA0\xC7-\xC8\xFA-\xFE].|\xC6[\xA1-\xFE])|([\x00-\x7f])|(..)/g) {
         # ... calculate position, add to fonts to write ...
-	#print "Seen UDC: ", unpack('(H2)*', $1), ", in font: $IdToFont{$font_eid}\n" if $1;
-	if ($1) {
-	    push @UDC, {
-		X => $x,
-		Y => $y,
-		DBCSIncrement => $dbcs_increment,
-		Character => $1,
-		FontName => $font_name
-	    };
-	    $data .= "\xA1\x40";
-	    $dbcs_increment++;
+
+        if ( $1 || $3 ) {
+	    $Increment{$font_name} ||= { @{
+		$dbh->selectcol_arrayref(
+		"SELECT Character, Increment FROM $font_name",
+		{ Columns => [1, 2] }
+	    )} };
+	}
+
+	if (defined $1) {
+            push @UDC, {
+                X => $x,
+                Y => $y,
+                Character => $1,
+                FontName => $font_name
+            };
+            $data .= "\xA1\x40";
+	    $x += $Increment{$font_name}{$1};
 	}
 	elsif (defined $2) {
 	    # single byte
@@ -168,11 +172,11 @@ sub PTX_TRN {
 	    $x += $Increment{$font_name}{$2}
 	      or die "Cannot find char ".unpack('(H2)*', $2)." in $font_name";
 	    $data .= $2;
+  	    #print $font_name, "=", $x, "\n";
 	}
 	else {
-	    # dbcs
 	    $data .= $3;
-	    $dbcs_increment++;
+	    $x += $Increment{$font_name}{$3};
 	}
     }
     $dat->{struct}{Data} = $data;
@@ -210,7 +214,7 @@ sub EPG {
     )->write;
     $rec->spawn_obj(
 	Class => 'IID',
-	Color => '0100',
+	Color => '0008',
 	ConstantData1 => '000009600960000000000000',
 	ConstantData2 => '000000002D00',
 	ConstantData3 => '00',
@@ -232,7 +236,6 @@ sub EPG {
 
 	my ($X, $Y) = @{$char}{qw( X Y )};
 	$X += $row->{ASpace};
-	$X += $char->{DBCSIncrement} * $row->{Increment};
 	$Y -= $row->{BaseOffset};
 
 	if ($YOrientation eq '5a00') {

@@ -1,3 +1,10 @@
+[Changes for 0.12 - 2004-09-23]
+
+* UDC detection logic in udc4pca.pl fixed with regards to the Big5 range.
+* Update afpmkfontdb SQL schema to reflect that Bitmap should be BLOB.
+* udc4pca: calculate DBCS increment on-the-fly instead of multiplying it later.
+* udc4pca: use Black as the UDC color instead of 0200.
+
 [Changes for 0.11 - 2004-09-22]
 
 * In udc4pca.pl, respect SBI and BLN in setting baseline increments. 
