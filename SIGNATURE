@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 286c90fcdd91cd892c2d94719a8fec3c3814bfb3 Changes
+SHA1 ecb746349893de7e4f0e07ae88b8e3723ba7665d Changes
 SHA1 377bd7e882fdf4a8346cc00efe82b80263595e36 MANIFEST
 SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 1563ba89d6fd9858f5e840cf14af835e8131bc65 META.yml
+SHA1 298fc013515fd56b3c3fec1e41800ac225739dda META.yml
 SHA1 498fb36fa57870b93fe5ae7e48e9760c94331175 Makefile.PL
 SHA1 74f88204e791fc72c7d197cbdf011044d0225f2a README
 SHA1 b26ac27e5a57677aa210c0e908b28ff3ba28f03b inc/Module/Install.pm
@@ -26,10 +26,10 @@ SHA1 9ce6768a7b8f7032ec89594b773fafd58c6feb1d inc/Module/Install/Can.pm
 SHA1 b6c8f0f22c4c8ba48a7bac2c5e4bd61803a7b097 inc/Module/Install/Fetch.pm
 SHA1 aabcd47178e4e7b27e340ff5273269c93697c9c1 inc/Module/Install/Makefile.pm
 SHA1 207dfa13341a374fc78325fbeb99bc36659aef2d inc/Module/Install/Metadata.pm
-SHA1 bfc36deb38cf94243679dfa71f6e8c4e2000d20a inc/Module/Install/Scripts.pm
+SHA1 48ea7ce20a63ff1583036d6c4b8fd8e4c24457e6 inc/Module/Install/Scripts.pm
 SHA1 aff9341a15c04faec47089851e43d9d4061337e7 inc/Module/Install/Win32.pm
 SHA1 8e0d347ca21bc18b380d9d1aa5910b8d078a76b7 inc/Module/Install/WriteAll.pm
-SHA1 a8c30ac96bd824fb35eb05958d1c07b982eff60d lib/Parse/AFP.pm
+SHA1 2dbf2674c3b0ff3a2d77af9a1cce3939ce11ff65 lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -220,16 +220,16 @@ SHA1 80739d2b2134cc68c567e267b6755da39b934e22 lib/Parse/AFP/Triplet/TS.pm
 SHA1 5c1a2cc3ef01f0e5768383c978feebc55150004d lib/Parse/AFP/Triplet/UDTS.pm
 SHA1 a4d8e78e71dc8b752acd576c4335079e87b3a5f7 script/afpconv.pl
 SHA1 f2093d0eff7d72837f9a3b7e8b7293a3f9860f4b script/afpdump.pl
-SHA1 b2d8ff585626ff6d9541a8893275bb771d350f0c script/afpmkfontdb.pl
-SHA1 aa8fe51233cc2ba24a1b21ef7a8908b628a3a2ad script/afpsplit.pl
-SHA1 caae5cd506f5ae24b7175f5060297e2ba83b6cf1 script/afpviewfontdb.pl
+SHA1 68e2dc11109b6ba539ffe536676bc1dcc8d8eef3 script/afpmkfontdb.pl
+SHA1 814a8f823023e176d7d8ef792dec66bd3eb8937e script/afpsplit.pl
+SHA1 60e6c585a5f668e5cd36ca6083583797d68bf810 script/afpviewfontdb.pl
 SHA1 66037a2f6b3266884223d4c9515f5a06930f6181 t/0-signature.t
-SHA1 9c9dac58990f2756d966e96805fa578ec4cc10e9 t/1-basic.t
+SHA1 3af5e6e80364a5dfadfec8002cabc7dccf25ebef t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (FreeBSD)
 
-iD8DBQFBPgKltLPdNzw1AaARAkp2AJ9oP+kGSafnA23MoZx0tStNKFh6MQCfSGM3
-zktnd9vTAlxWio8+N25jmVE=
-=N3GP
+iD8DBQFBPh+xtLPdNzw1AaARArHbAJ4vppr2uqAE2XXh858fsU1BkSgVBQCgjKPP
+TwfBCbgkqtkhBxrSEhj1MjI=
+=+u+Z
 -----END PGP SIGNATURE-----

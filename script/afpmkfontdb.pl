@@ -4,7 +4,7 @@ use strict;
 use Encode;
 use File::Glob 'bsd_glob';
 use File::Basename;
-use DBI;
+use DBI qw(:sql_types);
 use DBD::SQLite;
 use Parse::AFP;
 
@@ -19,23 +19,21 @@ use constant +{ map { +FNI_Elements->[$_] => $_ } 0..$#{+FNI_Elements} };
 
 $|++;
 
-die "Usage: $0 dir fonts.db\n" unless @ARGV == 2;
+die "Usage: $0 dir fonts.db\n" unless @ARGV >= 1 or -d 'dir';
 
-my $input = shift;
-my $output = shift;
-our ($dbh, $sth, $sth_rotated);
-our $FontName;
+my $input = shift || 'dir';
+my $output = shift || 'fonts.db';
+
 our (%GCG, %FNI, @FNM, $FNG);
-our ($FCSName, $CPName, $Section, $Rotation);
-our ($MaxWidth, $MaxHeight, $Resolution);
+our ($FontName, $Rotation, $Resolution);
 
 unlink $output if $output;
 
-$dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+my $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+
 init_db();
 
-my @files = bsd_glob("$input/X0*.afp");
-foreach my $file (sort @files) {
+foreach my $file (bsd_glob("$input/X0*.afp")) {
     basename($file) =~ /^(X0([^.]+))/ or next;
 
     $FontName = $1;
@@ -66,35 +64,33 @@ sub CFI {
     my $data = $_[0]->Data;
     my $offset = 0;
     while (my $CFIRepeatingGroup = substr($data, $offset, $CFIRepeatingGroupLength)) {
-        ($FCSName, $CPName, $Section) = unpack("a8a8x8C", $CFIRepeatingGroup);
+        my ($fcs_name, $cp_name, $section) = unpack("a8a8x8C", $CFIRepeatingGroup);
 
         %GCG = %FNI = @FNM = (); $FNG = ''; $Rotation = 0;
 
-        die unless -e "$input/".Encode::decode( cp500 => $CPName ).".afp";
-        die unless -e "$input/".Encode::decode( cp500 => $FCSName ).".afp";
+        $cp_name = "$input/".Encode::decode( cp500 => $cp_name ).".afp";
+        $fcs_name = "$input/".Encode::decode( cp500 => $fcs_name ).".afp";
 
-        Parse::AFP->new(
-            "$input/".Encode::decode( cp500 => $CPName ).".afp", { lazy => 1 }
-        )->callback_members([qw( CPC CPI )]);
+        Parse::AFP->new($cp_name, { lazy => 1 })->callback_members([qw( CPC CPI )]);
+        Parse::AFP->new($fcs_name, { lazy => 1 })->callback_members([qw( FNC FNI FNM FNG )]);
 
-        Parse::AFP->new(
-            "$input/".Encode::decode( cp500 => $FCSName ).".afp", { lazy => 1 }
-        )->callback_members([qw( FNC FNI FNM FNG )]);
-
-        write_record(); 
+        write_record($section); 
 
         $offset += $CFIRepeatingGroupLength; 
+
         print ".";
     }
 }
 
 sub write_record {
+    my $section = shift;
     while (my ($rotation, $fni) = each %FNI) {
-        $sth = $dbh->prepare_cached(
+        my $sth = $dbh->prepare_cached(
             $rotation
                 ? "INSERT INTO RotationInfo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
                 : "INSERT INTO $FontName VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
         );
+
         foreach my $codepoint (keys %GCG) {
             my $gcg = $GCG{$codepoint};
             my $fnc = $fni->{$gcg} or next;
@@ -102,28 +98,37 @@ sub write_record {
             defined(my $count = pop @$fnc) or next;
             my $fnm = $FNM[$count] or die "Cannot find fnm #$count";
 
-            # printf "%s - 0x%02X 0x%02X - @$fnm\n", $rotation, $Section, $codepoint;
+            # printf "%s - 0x%02X 0x%02X - @$fnm\n", $rotation, $section, $codepoint;
+
+            $sth->bind_param(
+                1,
+                ($section ? pack('n', $section * 256 + $codepoint) : pack('C', $codepoint)),
+                SQL_VARCHAR,
+            );
+            $sth->bind_param(
+                2 + $_,
+                $fnc->[$_],
+                SQL_INTEGER,
+            ) for 0..$#$fnc;
 
             if ($rotation) {
-                $sth->execute(
-                    ($Section ? pack('n', $Section * 256 + $codepoint) : pack('C', $codepoint)),
-                    @$fnc,
-                    $FontName,
-                    $rotation,
+                $sth->bind_param( 9, $FontName, SQL_VARCHAR );
+                $sth->bind_param( 10, $rotation, SQL_INTEGER );
+            }
+            else {
+                $sth->bind_param(
+                    9,
+                    substr($FNG, pop @$fnm, int(($fnm->[Width] + 7)/8)*$fnm->[Height]),
+                    SQL_BLOB,
                 );
-                next;
+                $sth->bind_param(
+                    10 + $_,
+                    $fnm->[$_],
+                    SQL_INTEGER,
+                ) for 0..$#$fnm;
             }
 
-            # default rotation
-            $sth->execute(
-                ($Section ? pack('n', $Section * 256 + $codepoint) : pack('C', $codepoint)),
-                @$fnc,
-                unpack(
-                    'H*',
-                    substr($FNG, pop @$fnm, int(($fnm->[Width] + 7)/8)*$fnm->[Height])
-                ),
-                @$fnm,
-            );
+            $sth->execute;
         }
     }
 }
@@ -137,8 +142,7 @@ sub CPI {
     my $data = $_[0]->Data;
     my $offset = 0;
     while (my $CPIRepeatingGroup = substr($data, $offset, $CPIRepeatingGroupLength)) {
-        our ($GCGID, $CodePoint) = unpack("a8xC", $CPIRepeatingGroup);
-        #$GCGID = Encode::decode( cp500 => $GCGID ); # XXX
+        my ($GCGID, $CodePoint) = unpack("a8xC", $CPIRepeatingGroup);
         $GCG{$CodePoint} = $GCGID;
         $offset += $CPIRepeatingGroupLength; 
     }
@@ -164,8 +168,6 @@ sub FNI {
             # cast "unsigned short" to "signed short"
             $_ -= 65536 if $_ > 32768;
         }
-
-        #      $GCGID = Encode::decode( cp500 => $GCGID ); # XXX
 
         $FNI{$Rotation}{$GCGID} = [
             $CharInc, $AscendHt, $DescendDp, $ASpace, $BSpace, $CSpace, $BaseOset, $FNMCnt

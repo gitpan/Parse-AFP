@@ -1,3 +1,11 @@
+[Changes for 0.06 - 2004-09-08]
+
+* Corrected DBD::SQLite's BLOB usage in fontdb scripts.
+* Cleaned up and speeded up afpmkfontdb.pl.
+* Give sane defaults for the scripts.
+* Correctly install all scripts instead of only the first one.
+* Inhibit test warnings temporarily.
+
 [Changes for 0.05 - 2004-09-08]
 
 * New scripts: afpsplit.pl, afpmkfontdb.pl, afpviewfontdb.pl.

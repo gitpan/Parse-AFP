@@ -7,9 +7,9 @@ use Data::Dumper;
 
 $|++;
 
-die "Usage: $0 fonts.db\n" unless @ARGV == 1;
+die "Usage: $0 fonts.db\n" unless @ARGV >= 1 or -e 'fonts.db';
 
-my $input = shift;
+my $input = shift || 'fonts.db';
 my $dbh = DBI->connect("dbi:SQLite:dbname=$input") or die $DBI::errstr;
 my $fonts = $dbh->selectcol_arrayref("SELECT FontName FROM Fonts") or die $dbh->errstr;
 $dbh->{sqlite_handle_binary_nulls} = 1;
@@ -26,21 +26,21 @@ while (1) {
     $sth->execute;
 
     while ( my $row = $sth->fetchrow_hashref ) {
-        my $map = unpack('B*', pack('H*', $row->{Bitmap}));
+        my $map = unpack('B*', $row->{Bitmap});
         while (my $x = substr($map, 0, int(($row->{Width} + 7)/8)*8, '')) {
             $x =~ s/0/./g;
             $x =~ s/1/@/g;
             print "$x\n";
         }
 
-        printf "[%s] %s*%s Inc/Asc/Desc:%s/%s/%s A/B/C:%s/%s/%s Offset:%s | Stop? ", (
-            unpack('H*', $row->{Character}), @{$row}{qw(
+        printf "[0x%s] %s*%s Inc/Asc/Desc:%s/%s/%s A/B/C:%s/%s/%s Offset:%s | Stop? ", (
+            uc(unpack('H*', $row->{Character})), @{$row}{qw(
                 Width Height Increment Ascend Descend
                 ASpace BSpace CSpace BaseOffset
             )}
         );
 
         $row->{Bitmap} or next;
-        last if <STDIN> =~ /y/i;
+        last if <STDIN> =~ /[yq!]/i;
     }
 }

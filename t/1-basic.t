@@ -8,7 +8,8 @@ use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
 use Test::More tests => 20;
 
-$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
+# XXX - investigate the numeric warning
+$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) unless $_[0] =~ /numeric/ };
 $SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
 use_ok('Parse::AFP');
