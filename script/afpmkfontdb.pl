@@ -7,6 +7,7 @@ use File::Basename;
 use DBI qw(:sql_types);
 use DBD::SQLite;
 use Parse::AFP;
+use Getopt::Long;
 
 use constant GCG_Elements => [
     qw( Increment Ascend Descend ASpace BSpace CSpace BaseOffset _FNMCount )
@@ -19,26 +20,50 @@ use constant +{ map { +FNI_Elements->[$_] => $_ } 0..$#{+FNI_Elements} };
 
 $|++;
 
-die "Usage: $0 dir fonts.db\n" unless @ARGV >= 1 or -d 'dir';
+die "Usage: $0 [ -o fonts.fdb | fdbdir ] [ dir | file... ] \n" unless @ARGV >= 1 or -d 'dir';
 
-my $input = shift || 'dir';
-my $output = shift || 'fonts.db';
-my $file = shift;
-my $dbh;
+my $default_output;
+GetOptions(
+    'o|output:s' => \$default_output,
+);
+
+my ($dbh, $file, $output);
 
 our (%GCG, %FNI, %SpaceIncrement, @FNM, $FNG);
 our ($FontName, $Rotation, $Resolution);
 
-if (!$file) {
-    unlink $output if -e $output;
+my (%initialized, $is_child);
+my @inputs = sort map { (-d $_) ? bsd_glob("$_/*") : $_ } (@ARGV ? @ARGV : 'dir');
 
-    $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
-    init_db();
-    $dbh->disconnect;
+foreach my $i (@inputs) {
+    $file = $i;
+    $file =~ /X0.*afp$/i or next;
+    if (-d $default_output) {
+        $output = "$default_output/".basename((substr($file, 0, -3) . 'fdb'));
+    }
+    elsif ($default_output) {
+        $output = $default_output;
+    }
+    else {
+        $output = substr($file, 0, -3) . 'fdb';
+    }
 
-    system($^X, $0, $input, $output, $_) for bsd_glob("$input/X0*.afp");
-    exit;
+    if (!$initialized{$output}++) {
+        unlink $output if -e $output;
+        $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
+        init_db();
+        $dbh->disconnect;
+    }
+
+    if (my $pid = fork) {
+        waitpid($pid, 0);
+    }
+    else {
+        $is_child = 1;
+        last;
+    }
 }
+$is_child or exit;
 
 $dbh = DBI->connect("dbi:SQLite:dbname=$output") or die $DBI::errstr;
 
@@ -125,8 +150,8 @@ sub CFI {
 
         %GCG = %FNI = @FNM = (); $FNG = ''; $Rotation = 0;
 
-        $cp_name = "$input/".Encode::decode( cp500 => $cp_name ).".afp";
-        $fcs_name = "$input/".Encode::decode( cp500 => $fcs_name ).".afp";
+        $cp_name = dirname($file)."/".Encode::decode( cp500 => $cp_name ).".afp";
+        $fcs_name = dirname($file)."/".Encode::decode( cp500 => $fcs_name ).".afp";
 
         Parse::AFP->new($cp_name, { lazy => 1 })->callback_members([qw( CPC CPI )]);
         Parse::AFP->new($fcs_name, { lazy => 1 })->callback_members([qw( FNC FNI FNM FNG FNO )]);

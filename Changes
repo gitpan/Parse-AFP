@@ -1,3 +1,12 @@
+[Changes for 0.21 - 2004-10-14]
+
+* udc4pca.pl now supports RMI/RMB sections.
+* In cp835, \x40\x40 is recognised as a character.
+* Both afpmkfontdb.pl and udc4pca.pl now supports multiple font databases.
+* "Missing font in database" is no longer a fatal exception for udc4pca. 
+* If a file has no UDC chunks, don't bother joining individual pages, just
+  copy the whole file.
+
 [Changes for 0.20 - 2004-10-13]
 
 * Apply the same logic fix to udc4pca.pl.

@@ -8,7 +8,8 @@ use DBI;
 use DBD::SQLite;
 use Data::Dumper;
 use Parse::AFP;
-use Getopt::Std;
+use Getopt::Long;
+use File::Glob 'bsd_glob';
 
 my %CodePages = (
     947 => {
@@ -25,6 +26,15 @@ my %CodePages = (
             |
             (..)                                    # Double Byte
         }x,
+        NoUDC => qr{^
+            (?:
+                [\x00-\x7f]+
+            |
+                (?:[\xA1-\xC5\xC9-\xF9].)+
+            |
+                (?:\xC6[^\xA1-\xFE])+
+            )*
+        $}x,
     },
     835 => {
         FillChar => "\x40\x40",
@@ -34,37 +44,66 @@ my %CodePages = (
             |
             ((?!))                                  # Single Byte
             |
-            ([\x41-\x91].)                          # Double Byte
+            ([\x40-\x91].)                          # Double Byte
         }x,
+        NeedDBCSPattern => 1,
+        NoUDC => qr{^[^\x92-\xFE]*$}x,
     },
 );
 
-my %opts;
-getopts('i:o:f:c:d:u:', \%opts);
-
-my $input       = $opts{i} || shift;
-my $db          = $opts{f} || (-e 'fonts.db' ? 'fonts.db' : undef);
-my $output      = $opts{o} || 'fixed.afp';
-my $codepage    = $opts{c} || 947;
-my $dbcs_pat    = $opts{d};
+my ($input, $dbcs_pattern, @db);
+my $codepage    = 947;
+my $output      = 'fixed.afp';
 my $dir         = 'udcdir';
+my $adjust;
 
-my @UDC;
-die "Usage: $0 -c [947|835] -d dbcs_pattern -i input.afp -o output.afp -f fonts.db\n"
-    if grep !defined, $input, $db, $output;
+GetOptions(
+    'i|input:s'         => \$input,
+    'f|fontdb:s@'       => \@db,
+    'o|output:s'        => \$output,
+    'u|udcdir:s'        => \$dir,
+    'd|dbcs-pattern:s'  => \$dbcs_pattern,
+    'c|codepage:i'      => \$codepage,
+    'a|adjust'          => \$adjust,
+);
+
+$input ||= shift;
+@db = sort grep /\.f?db$/i, map { (-d $_) ? bsd_glob("$_/*") : $_ } (@db ? @db : 'fonts.db');
+
+die "Usage: $0 [-a] [-c 947|835] -d dbcs_pattern -i input.afp -o output.afp -f fonts.db\n"
+    if !@db or grep !defined, $input, $output;
 
 $CodePages{$codepage} or die "Unknown codepage: $codepage";
 
-my ($FillChar, $FirstChar, $CharPattern, $NoUDC)
-    = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern NoUDC )};
+my ($FillChar, $FirstChar, $CharPattern, $NeedDBCSPattern, $NoUDC)
+    = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern NeedDBCSPattern NoUDC )};
+
+die "Need DBCS Pattern with -d for thsi codepage"
+    if $NeedDBCSPattern and !$dbcs_pattern;
 
 my (%FontToId, %IdToFont);
 
 ##########################################################################
 
 no warnings qw(once numeric);
-my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die $DBI::errstr;
+
+my %errors;
+my $db = shift(@db);
+die "No such database: $db" unless -e $db;
+my $dbh = DBI->connect(
+    "dbi:SQLite:dbname=$db", '', '', {
+        PrintError => 0,
+        HandleError => sub { $errors{$_[0]}++ },
+    }
+) or die $DBI::errstr;
 my $fonts = $dbh->selectall_hashref("SELECT * FROM Fonts", 'FontName') or die $dbh->errstr;
+
+foreach my $idx (0..$#db) {
+    my $filename = $dbh->quote($db[$idx]);
+    $dbh->do("ATTACH DATABASE $filename AS DB$idx") or die $dbh->errstr;
+    my $more_fonts = $dbh->selectall_hashref("SELECT * FROM Fonts", 'FontName') or die $dbh->errstr;
+    %$fonts = (%$fonts, %$more_fonts);
+}
 
 print STDERR "Phase 1: Split...";
 
@@ -77,6 +116,18 @@ print STDERR "Phase 1: Split...";
 ) == 0) or die $?;
 
 opendir my $dh, $dir or die $!;
+my @files = sort { int($a) <=> int($b) } grep /\d/, readdir($dh);
+if (!grep /udc$/, @files) {
+    print STDERR "\nPhase 2: Skipped, no UDC found...";
+
+    if ($input ne $output) {
+        require File::Copy;
+        File::Copy::copy($input => $output);
+    }
+
+    print STDERR "\nDone!\n";
+    exit;
+}
 
 print STDERR "\nPhase 2: Join...";
 
@@ -84,7 +135,7 @@ unlink $output if -e $output;
 open my $ofh, '>', $output or die $!;
 binmode($ofh);
 
-foreach my $file (sort { int($a) <=> int($b) } readdir($dh)) {
+foreach my $file (@files) {
     my $name = $file;
     if ($file =~ /^(.+)\.udc$/) {
         $name = $1;
@@ -103,7 +154,15 @@ foreach my $file (sort { int($a) <=> int($b) } readdir($dh)) {
 
 close $ofh;
 
-print STDERR "\nDone!";
+dbmopen %errors, 'errors', 0644;
+if (my @errors = sort keys %errors) {
+    print "\nExceptions encountered:\n";
+    print join "\n", @errors, '';
+}
+dbmclose %errors;
+unlink glob("errors.*");
+
+print STDERR "\nDone!\n";
 
 sub udc4pca {
     my ($in, $out) = @_;
@@ -112,16 +171,21 @@ sub udc4pca {
         print STDERR ".";
     }
     else {
+        dbmopen %errors, 'errors', 0644;
         my $afp = Parse::AFP->new($in, {lazy => 1, output_file => $out});
-        $afp->callback_members([qw( MCF1 MCF PGD PTX EPG * )]);
+        $afp->callback_members([qw( MCF1 MCF PGD PTX EMO EPG * )]);
         exit;
     }
 }
 
+##########################################################################
+
+my @UDC;
 sub __ {
     $_[0]->done;
 }
 
+my ($x, $y);
 my ($XUnit, $YUnit, $XPageSize, $YPageSize);
 sub PGD {
     my $rec = shift;
@@ -130,6 +194,7 @@ sub PGD {
     $XPageSize = $rec->XPageSize;
     $YPageSize = $rec->YPageSize;
     $rec->done;
+    $x = $y = 0;
 }
 
 sub MCF1 {
@@ -183,7 +248,7 @@ sub PTX {
         if ($code == 0xDA or $code == 0xDB) {
             if (substr($$buf, $pos + 2, $size - 2) !~ $NoUDC) {
                 $rec->callback_members([map "PTX::$_", qw(
-                    SIM SBI STO SCFL AMI AMB BLN TRN
+                    SIM SBI STO SCFL AMI AMB RMI RMB BLN TRN
                 )], \$font_eid);
                 $rec->refresh;
                 last;
@@ -196,7 +261,6 @@ sub PTX {
     $rec->done;
 }
 
-my ($x, $y);
 sub PTX_AMI {
     my $rec = shift;
     $x = $rec->Data;
@@ -205,6 +269,16 @@ sub PTX_AMI {
 sub PTX_AMB {
     my $rec = shift;
     $y = $rec->Data;
+}
+
+sub PTX_RMI {
+    my $rec = shift;
+    $x += $rec->Data;
+}
+
+sub PTX_RMB {
+    my $rec = shift;
+    $y += $rec->Data;
 }
 
 my $InlineMargin;
@@ -250,12 +324,12 @@ sub PTX_TRN {
 
     # if $font_name is single byte...
     # simply add increments together without parsing UDC
-    if ($dbcs_pat and $font_name !~ /$dbcs_pat/o) {
+    if ($dbcs_pattern and $font_name !~ /$dbcs_pattern/o) {
         $Increment{$font_name} ||= { @{
             $dbh->selectcol_arrayref(
             "SELECT Character, Increment FROM $font_name",
             { Columns=>[1, 2] }
-        )} };
+        ) || [] } };
         $x += $Increment{$font_name}{$_}
             or die "Cannot find char ".unpack('(H2)*', $_)." in $font_name"
                 foreach split(//, $string);
@@ -271,7 +345,7 @@ sub PTX_TRN {
 		$dbh->selectcol_arrayref(
 		"SELECT Character, Increment FROM $font_name",
 		{ Columns => [1, 2] }
-	    )} };
+	    ) || [] } };
 	}
 
 	if (defined $1) {
@@ -290,7 +364,7 @@ sub PTX_TRN {
 		$dbh->selectcol_arrayref(
 		"SELECT Character, Increment FROM $font_name",
 		{ Columns=>[1, 2] }
-	    )} };
+	    ) || [] } };
 	    $x += $Increment{$font_name}{$2}
 	      or die "Cannot find char ".unpack('(H2)*', $2)." in $font_name";
 	    $data .= $2;
@@ -303,6 +377,8 @@ sub PTX_TRN {
     }
     $dat->{struct}{Data} = $data;
 }
+
+BEGIN { *EMO = *EPG; }
 
 sub EPG {
     my $rec = shift;
@@ -359,14 +435,17 @@ sub EPG {
     )->write;
 
     foreach my $char (@UDC) {
-	my $sth = $dbh->prepare("SELECT * FROM $char->{FontName} WHERE Character = ?");
+	my $sth = $dbh->prepare("SELECT * FROM $char->{FontName} WHERE Character = ?") or next;
 	$sth->execute($char->{Character});
 
 	my $row = $sth->fetchrow_hashref or next;
 
 	my ($X, $Y) = @{$char}{qw( X Y )};
 	$X += $row->{ASpace};
-	$Y -= $row->{BaseOffset};
+
+	my $oset = $row->{BaseOffset};
+	$oset = int($oset * 3 / 4) if $adjust;
+	$Y -= $oset;
 
 	if ($YOrientation eq '5a00') {
 	    ($X, $Y) = ($XPageSize - $Y, $X);

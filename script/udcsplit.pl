@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
@@ -35,12 +35,12 @@ die "Usage: $0 -c [947|835] -i input.afp -o udcdir\n"
 rmtree([ $output ]) if -d $output;
 
 my $NoUDC = $NoUDC{$codepage} or die "Unknown codepage: $codepage\n";
+my ($has_udc, $name, $prev, $has_BNG, $PTX_cnt);
+$name = $prev = 0;
 
 mkdir $output;
 my $afp = Parse::AFP->new($input, { lazy => 1, output_file => "$output/0" });
-$afp->callback_members([qw( BNG BPG PTX * )]);
-
-my ($has_udc, $name, $prev, $has_BNG, $PTX_cnt);
+$afp->callback_members([qw( BMO BNG BPG PTX * )]);
 
 if ($has_udc) {
     rename("$output/$name" => "$output/$name.udc") or die $!;
@@ -60,6 +60,8 @@ sub BNG {
 
     $_[0]->done;
 }
+
+BEGIN { *BMO = *BPG; }
 
 sub BPG {
     if( !$has_BNG ) {
