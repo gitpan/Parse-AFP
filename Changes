@@ -1,3 +1,8 @@
+[Changes for 0.16 - 2004-10-12]
+
+* Make the tight loop even faster using a dedicated tight_loop() contruct.
+  Requires setting {output_file} in new(), like script/udc4pca.pl now does.
+
 [Changes for 0.15 - 2004-10-12]
 
 * On lazy evaluation with callback_members that includes '*', skip all

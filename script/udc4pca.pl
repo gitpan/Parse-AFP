@@ -65,8 +65,7 @@ my (%FontToId, %IdToFont);
 my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die $DBI::errstr;
 my $fonts = $dbh->selectall_hashref("SELECT * FROM Fonts", 'FontName') or die $dbh->errstr;
 
-my $afp = Parse::AFP->new($input, {lazy => 1});
-$afp->set_output_file($output);
+my $afp = Parse::AFP->new($input, {lazy => 1, output_file => $output});
 $afp->callback_members([qw( MCF1 MCF PGD PTX EPG * )]);
 
 sub __ {
@@ -266,8 +265,6 @@ sub EPG {
 	YOffset => 0,
 	YOrientation => $YOrientation,
     )->write;
-
-    use YAML;
 
     my %res = @{$dbh->selectcol_arrayref(
         "SELECT FontName, Resolution FROM Fonts", { Columns => [1,2] }

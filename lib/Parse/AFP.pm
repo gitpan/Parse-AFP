@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.15';
+$Parse::AFP::VERSION = '0.16';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -24,84 +24,81 @@ sub valid_unformat {
     return 1;
 }
 
-sub make_next_member {
-    my $self = shift;
-    my $class = ref($self);
-    my $struct = $self->{struct};
-    my $field = $Parse::Binary::MemberFields{$class}[0];
-
-    my $items = $struct->{$field};
-    my $code = $self->SUPER::make_next_member;
-    my $count = 0;
-
-    sub {
-        delete $items->[$count++] if $count;
-        push @$items, &{$self->{_read_chunk}};
-        goto &$code;
-    };
-}
-
-sub read_file {
-    my ($self, $file) = @_;
-    return $self->SUPER::read_file($file) unless ref $self and $self->{lazy};
-
-    open my $fh, '<', $file or die "Cannot open $file for reading: $!";
-    binmode($fh);
-
-    my ($code, $length, $data);
-    read($fh, $code, 1);
-    read($fh, $length, 2);
-    read($fh, $data, (unpack('n', $length) - 2));
-
-    if (!eof($fh)) {
-        $self->{_read_chunk} = sub {
-            my (@data, $type, $pos, $buf);
-
-            read($fh, $code, 1);
-            read($fh, $length, 2);
-
-            # We now cheat and skip unintereting types.
-            read($fh, $type, 3);
-
-            our %IgnoreType;
-            if (exists $IgnoreType{$type} and my $ofh = $self->{output}) {
-                # We now ignore everything...
-                read($fh, $buf, (unpack('n', $length) - 5));
-
-                print $ofh $code, $length, $type, $buf;
-                $self->{_read_chunk} = sub { () } if eof($fh);
-                goto &{$self->{_read_chunk}};
-            }
-
-            $data[0] = unpack('H2', $code);
-            seek($fh, -3, 1);
-            read($fh, $data[1], (unpack('n', $length) - 2));
-            $self->{_read_chunk} = sub { () } if eof($fh);
-
-            return \@data;
-        };
-    }
-
-    return $code.$length.$data;
-}
-
 sub callback_members {
     my $self = shift;
     $self->{callback_members} = { map { ($_ => 1) } @{$_[0]} };
 
-    our %IgnoreType;
-    local %IgnoreType;
-
-    if ($self->{callback_members}{'*'} and $self->{output}) {
-        my %table = reverse Parse::AFP::Record::DISPATCH_TABLE();
-        %IgnoreType = 
-            map { (pack('H6', $table{$_}) => 1) }
-            grep { !$self->{callback_members}{$_} }
-            keys %table;
+    if ($self->{callback_members}{'*'} and $self->{output} and $self->{input}) {
+        return $self->tight_loop(@_);
     }
 
     while (my $member = $self->next_member) {
 	$member->callback(scalar caller, @_);
+    }
+}
+
+sub _noop { }
+
+sub read_file {
+    my ($self, $file) = @_;
+
+    open my $fh, "< $file" or die "Cannot open $file for reading: $!";
+    binmode($fh);
+
+    if ($self->{lazy} and $self->{output_file}) {
+        $self->{input} = $fh;
+        $self->set_output_file($self->{output_file});
+        return '';
+    }
+
+    local $/;
+    return scalar <$fh>;
+}
+
+sub tight_loop {
+    my $self = shift;
+    my $callback = caller(1);
+    my $ofh = $self->{output};
+    my $is_dirty;
+    my ($header, $buf);
+
+    local *Parse::AFP::Record::write = \&_noop;
+    local *Parse::AFP::Record::remove = \&_noop;
+    local *Parse::AFP::PTX::refresh_parent = sub {
+        my $self = shift;
+        $self->refresh_length;
+        print $ofh $self->dump;
+        $is_dirty = 1;
+    };
+
+    my %xable = Parse::AFP::Record::DISPATCH_TABLE();
+    my %table = reverse Parse::AFP::Record::DISPATCH_TABLE();
+    my %IgnoreType = 
+        map { (pack('H6', $table{$_}) => 1) }
+        grep { !$self->{callback_members}{$_} }
+        keys %table;
+
+    my $fh = $self->{input};
+    seek $fh, 0, 0;
+
+    my $attr = { lazy => 1, output => $ofh };
+
+    while (!eof($fh)) {
+        read($fh, $header, 6);
+        seek $fh, -6, 1;
+        read($fh, $buf, (unpack('n', substr($header, 1, 2)) + 1));
+
+        # We now cheat and skip unintereting types.
+        if (exists $IgnoreType{substr($header, -3)}) {
+            print $ofh $buf;
+            next;
+        }
+
+        # Do Something Interesting with $header and $buf
+        $is_dirty = 0;
+        Parse::AFP::Record->new( \$buf, $attr )->callback($callback, @_);
+        print $ofh $buf unless $is_dirty;
+        next;
     }
 }
 
@@ -115,7 +112,7 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.15 of Parse::AFP, released
+This document describes version 0.16 of Parse::AFP, released
 October 12, 2004.
 
 =head1 SYNOPSIS
