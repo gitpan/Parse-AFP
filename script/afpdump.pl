@@ -1,25 +1,23 @@
-#!/usr/local/bin/perl
-# $File: /local/member/autrijus/Parse-AFP//script/afpdump.pl $ $Author: autrijus $
-# $Revision: #6 $ $Change: 3946 $ $DateTime: 2004-02-17T19:42:57.384625Z $
+#!/usr/bin/perl
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
-
-$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
-$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
 use encoding 'utf8';
 use File::Basename;
 use Parse::AFP;
 
 sub Header ();
-sub Parse::AFP::PTX::TRN::ENCODING { 'big5' };
+sub Parse::AFP::PTX::TRN::ENCODING () { 'big5' };
 
 die "Usage: $0 file.afp > file.html\n" unless @ARGV;
 
+$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
+$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
+
 my $input = shift;
-my $afp = Parse::AFP->new($input);
+my $afp = Parse::AFP->new($input, { lazy => 1 });
 $input = basename($input);
 
 print Header();
@@ -55,7 +53,7 @@ sub dump_afp {
 
 sub dump_members {
     my $obj = shift;
-    foreach my $rec ($obj->members) {
+    while (my $rec = $obj->next_member) {
 	print "<li><strong>". substr(ref($rec), 12)."</strong>";
 	dump_afp($rec);
 	print "</li>";

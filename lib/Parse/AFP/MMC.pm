@@ -1,5 +1,5 @@
-# $URL: /local/member/autrijus/Parse-AFP//lib/Parse/AFP/MMC.pm $ $Author: autrijus $
-# $Rev: 3917 $ $Date: 2004-02-17T07:03:18.734947Z $
+# $URL: //local/member/autrijus/Parse-AFP/lib/Parse/AFP/MMC.pm $ $Author: autrijus $
+# $Rev: 1130 $ $Date: 2004-02-17T15:40:29.640821Z $
 
 package Parse::AFP::MMC;
 use base 'Parse::AFP::Record';

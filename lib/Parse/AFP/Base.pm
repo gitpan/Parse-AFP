@@ -1,5 +1,5 @@
-# $File: /local/member/autrijus/Parse-AFP/lib/Parse/AFP/Base.pm $ $Author: autrijus $
-# $Revision: #18 $ $Change: 3921 $ $DateTime: 2004-02-17T11:17:10.383551Z $
+# $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP/Base.pm $ $Author: autrijus $
+# $Revision: #9 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP::Base;
 
@@ -17,8 +17,8 @@ sub padding {
 
 sub member_length_bytes {
     my ($self) = @_;
-    my ($field) = $self->member_fields or return;
-    $self->field_format($field) =~ m{(\S+)/} or return;
+    my ($field) = $self->member_fields or return 0;
+    $self->field_format($field) =~ m{(\S+)/} or return 0;
     return length(pack($1, 0));
 }
 
@@ -90,11 +90,10 @@ sub set_field_arrayref {
 
 sub validate_memberdata {
     my ($self, $field) = @_;
-    my @members = grep {
-	$self->valid_memberdata($field, $_)
-    } @{$self->field($field)||[]};
-    $self->set_field_arrayref($field, \@members );
-    return @members;
+    $field = $self->field($field) or return;
+    @$field = grep {
+	ref($_) eq 'CODE' or $self->valid_memberdata($field, $_)
+    } @$field;
 }
 
 1;

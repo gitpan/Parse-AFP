@@ -1,9 +1,9 @@
 # $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP/Record.pm $ $Author: autrijus $
-# $Revision: #8 $ $Change: 3918 $ $DateTime: 2004-02-17T10:05:07.533350Z $
+# $Revision: #7 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP::Record;
+
 use base 'Parse::AFP::Base';
-use base 'Parse::Binary';
 use constant FORMAT => (
     CC		=> 'H2',
     Length	=> 'n',	    # length() + 2

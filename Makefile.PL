@@ -13,7 +13,7 @@ install_script	(<script/*.pl>);
 
 requires	(
     'perl'	    => '5.8.2',
-    'Parse::Binary' => 0.06,
+    'Parse::Binary' => 0.07,
 );
 
 WriteAll( sign => 1 );

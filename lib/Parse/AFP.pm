@@ -1,8 +1,8 @@
 # $File: /local/member/autrijus/Parse-AFP//lib/Parse/AFP.pm $ $Author: autrijus $
-# $Revision: #12 $ $Change: 3946 $ $DateTime: 2004-02-17T19:42:57.384625Z $
+# $Revision: #10 $ $Change: 2427 $ $DateTime: 2004-02-19T21:40:36.424632Z $
 
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.04';
+$Parse::AFP::VERSION = '0.05';
 
 use strict;
 use base 'Parse::AFP::Base';
@@ -14,6 +14,19 @@ use constant BASE_CLASS => __PACKAGE__;
 # Must start with the magic byte 0x90
 sub valid_memberdata { $_[-1][0] eq '5a' }
 
+sub valid_unformat {
+    my ($self, $content, $data) = @_;
+    return if $content->[0] ne '5a';
+    my $members = $self->{callback_members};
+    my $table = Parse::AFP::Record->dispatch_table;
+    my $type = $table->{ unpack('H6', $content->[1]) } or return;
+    if (!$members->{ $type } and my $fh = $self->output) {
+	print $fh $$data;
+	return;
+    }
+    return 1;
+}
+
 1;
 
 __END__
@@ -24,13 +37,13 @@ Parse::AFP - IBM Advanced Function Printing Parser
 
 =head1 VERSION
 
-This document describes version 0.04 of Parse::AFP, released February 18, 2004.
+This document describes version 0.05 of Parse::AFP, released September 8, 2004.
 
 =head1 SYNOPSIS
 
     use Parse::AFP;
     my $afp = Parse::AFP->new('input.afp');
-    while (my $rec = $afp->members) {
+    while (my $rec = $afp->next_member) {
 	print $rec->dump;
 	# ...
 	$rec->refresh; # if modified
@@ -68,6 +81,10 @@ itself and its members.  Also refreshes all uplevel parents.
 =head2 members
 
 Returns a list of member objects, if any.
+
+=head2 next_member
+
+Iterator for member objects.
 
 =head2 parent
 

@@ -1,178 +1,35 @@
-----------------------------------------------------------------------
-r3946:  autrijus | 2004-02-17T19:42:57.384625Z
+[Changes for 0.05 - 2004-09-08]
 
-* This be 0.04.
+* New scripts: afpsplit.pl, afpmkfontdb.pl, afpviewfontdb.pl.
+* Speeded up afpdump.pl and PTX parsing.
+* Added CPC, FNC parsing.
+* Raise dep to Parse::Binary 0.06, Perl 5.8.2.
+
+[Changes for 0.04 - 2004-02-17]
+
 * PTD1 and PGP1 were broken.
-* add backtrace sighandler to script/*.
+* Add backtrace sighandler to script/*.
+* Switch to callback_members API.
+* Add afpconv.pl.
+* ->dispatch and ->dispatch_members, two utility method to ease filter writing.
+  eventually we want it to become a full Parse::AFP::Filter class.
 
-----------------------------------------------------------------------
-r3921:  autrijus | 2004-02-17T11:17:10.383551Z
+[Changes for 0.03 - 2004-02-13]
 
-* switch to callback_members API.
+* Silence warnings during pack.
+* Multimember support.
+* Refactor per-member dump back to Parse::AFP.
+* Start of variant packing
+* Use Parse::Binary instead of Parse::AFP::FixedFormat.
+* Adjust to the new accessor methods of Parse::Binary
+* Move length functions to AFP side.
+* Properly install afpdump.pl.
 
-----------------------------------------------------------------------
-r3920:  autrijus | 2004-02-17T10:30:32.123171Z
+[Changes for 0.02 - 2004-02-10]
 
-* today's work. finally made afpconv work reasonably.
-
-----------------------------------------------------------------------
-r3919:  autrijus | 2004-02-17T10:05:54.650889Z
-
-* we now want 0.06.
-* keywords
-
-----------------------------------------------------------------------
-r3918:  autrijus | 2004-02-17T10:05:07.533350Z
-
-* adds afpconv.
-
-----------------------------------------------------------------------
-r3917:  autrijus | 2004-02-17T07:03:18.734947Z
-
-* keywords.
-
-----------------------------------------------------------------------
-r3879:  autrijus | 2004-02-16T23:04:50.805263Z
-
-* ->dispatch and ->dispatch_members, two utility method to ease filter
-  writing.  eventually we want it to become a full Parse::AFP::Filter class.
-
-----------------------------------------------------------------------
-r3877:  autrijus | 2004-02-16T21:48:12.368278Z
-
-* regen manifest.
-
-----------------------------------------------------------------------
-r3876:  autrijus | 2004-02-16T21:46:35.443902Z
-
-* rmdir.
-----------------------------------------------------------------------
-r3875:  autrijus | 2004-02-16T21:45:51.803677Z
-
-* not used anymore
-
-----------------------------------------------------------------------
-r3874:  autrijus | 2004-02-16T21:35:10.319390Z
-
-* modify the scripts to use the new Parse::Binary API
-----------------------------------------------------------------------
-r3873:  autrijus | 2004-02-16T21:33:18.487350Z
-
-* even more all-uppercase classes.
-
-----------------------------------------------------------------------
-r3872:  autrijus | 2004-02-16T20:19:22.631863Z
-
-* a bunch of new classes.
-
-----------------------------------------------------------------------
-r3624:  autrijus | 2004-02-13T19:24:37.074433Z
-
-* changes and signatures.
-----------------------------------------------------------------------
-r3623:  autrijus | 2004-02-13T19:22:46.140638Z
-
-* This be 0.03.
-* regenerate manifest.
-* silence warnings during pack.
-
-----------------------------------------------------------------------
-r3508:  autrijus | 2004-02-11T13:38:05.591034Z
-
-* multimember support.
-
-----------------------------------------------------------------------
-r3489:  autrijus | 2004-02-11T09:17:04.804330Z
-
-* refactor per-member dump back to Parse::AFP
-
-----------------------------------------------------------------------
-r3488:  autrijus | 2004-02-11T09:16:07.525695Z
-
-* start of variant packing
-
-----------------------------------------------------------------------
-r3483:  autrijus | 2004-02-11T07:58:03.552111Z
-
-* FixedFormat is no longer used.
-* adjust to the new accessor methods of Parse::Binary
-
-----------------------------------------------------------------------
-r3479:  autrijus | 2004-02-10T21:18:47.671797Z
-
-* oops.
-
-----------------------------------------------------------------------
-r3464:  autrijus | 2004-02-10T19:00:49.757890Z
-
-* move length functions to AFP side.
-
-----------------------------------------------------------------------
-r3463:  autrijus | 2004-02-10T16:56:01.671362Z
-
-* Change base class to Parse::Binary
-
-----------------------------------------------------------------------
-r3444:  autrijus | 2004-02-10T15:52:28.196003Z
-
-* another try at keyword expansion
-
-----------------------------------------------------------------------
-r3443:  autrijus | 2004-02-10T15:51:32.301095Z
-
-* also install afpdump.pl
-
-----------------------------------------------------------------------
-r3442:  autrijus | 2004-02-10T15:42:59.303570Z
-
-* changes and signatures.
-----------------------------------------------------------------------
-r3441:  autrijus | 2004-02-10T15:42:50.515646Z
-
-* make tests pass.
-
-----------------------------------------------------------------------
-r3440:  autrijus | 2004-02-10T15:38:07.760150Z
-
-* This be 0.02.
 * Add afpdump.pl, an utility to dump afp files to HTML files.
+* Raise dependency to Perl 5.8.1+.
 
-----------------------------------------------------------------------
-r3439:  autrijus | 2004-02-10T15:36:37.130947Z
+[Changes for 0.01 - 2004-02-09]
 
-oops
-
-----------------------------------------------------------------------
-r3438:  autrijus | 2004-02-10T15:35:56.397460Z
-
-
-----------------------------------------------------------------------
-r3421:  autrijus | 2004-02-09T19:48:01.920945Z
-
-* make it 5.8.1 only.
-
-----------------------------------------------------------------------
-r3420:  autrijus | 2004-02-09T19:36:20.404243Z
-
-* changes and signatures.
-----------------------------------------------------------------------
-r3419:  autrijus | 2004-02-09T19:34:03.117164Z
-
-* This be 0.01.
-
-----------------------------------------------------------------------
-r3407:  autrijus | 2004-02-09T19:03:24.425104Z
-
-* rcs expansion.
-
-----------------------------------------------------------------------
-r3406:  autrijus | 2004-02-09T18:15:04.932210Z
-
-* ->refresh now works.
-
-----------------------------------------------------------------------
-r3405:  autrijus | 2004-02-09T17:05:57.810392Z
-
-Initial commit of Parse::AFP
-
-----------------------------------------------------------------------
+* Initial CPAN release.

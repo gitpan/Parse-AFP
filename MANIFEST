@@ -204,6 +204,9 @@ META.yml
 README
 script/afpconv.pl
 script/afpdump.pl
+script/afpmkfontdb.pl
+script/afpsplit.pl
+script/afpviewfontdb.pl
 SIGNATURE
 t/0-signature.t
 t/1-basic.t

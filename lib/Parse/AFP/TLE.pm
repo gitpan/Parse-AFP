@@ -1,5 +1,5 @@
-# $File: /local/member/autrijus//Parse-AFP/lib/Parse/AFP/TLE.pm $ $Author: autrijus $
-# $Revision: #5 $ $Change: 3920 $ $DateTime: 2004-02-17T10:30:32.123171Z $
+# $File: //local/member/autrijus/Parse-AFP/lib/Parse/AFP/TLE.pm $ $Author: autrijus $
+# $Revision: #4 $ $Change: 1130 $ $DateTime: 2004-02-17T15:40:29.640821Z $
 
 package Parse::AFP::TLE;
 use base 'Parse::AFP::Record';

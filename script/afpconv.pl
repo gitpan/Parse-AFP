@@ -1,13 +1,8 @@
-#!/usr/local/bin/perl
-# $File: /local/member/autrijus/Parse-AFP//script/afpconv.pl $ $Author: autrijus $
-# $Revision: #6 $ $Change: 3946 $ $DateTime: 2004-02-17T19:42:57.384625Z $
+#!/usr/bin/perl
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/../../Parse-Binary/lib";
-
-$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
-$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
 use strict;
 use IO::File;
@@ -18,6 +13,9 @@ use Getopt::Std;
 use vars qw/$opt_i $opt_o/;
 getopts('i:o:'); $opt_i ||= shift;
 die "Usage: $0 -i afpfile -o OutputFile\n" if (!$opt_i or !$opt_o);
+
+$SIG{__WARN__} = sub { use Carp; Carp::cluck(@_) };
+$SIG{__DIE__} = sub { use Carp; Carp::confess(@_) };
 
 my (%FontToId, %IdToFont);
 
@@ -50,20 +48,31 @@ sub MCF {
 
 sub MCF_DataGroup {
     my $data_group = shift;
+    $data_group->callback_members(['Triplet::FQN', 'Triplet::RLI']);
+}
 
-    my $fqn = $data_group->first_member('FQN');
-    my $rli = $data_group->first_member('RLI');
-    my $font_e  = substr($fqn->Data, 2, 4);
+{
+my $font_e;
+
+sub Triplet_FQN {
+    my $fqn = shift;
+    $font_e = substr($fqn->Data, 2, 4);
+}
+
+sub Triplet_RLI {
+    my $rli = shift;
     my $font_eid = $rli->Data;
     $FontToId{$font_e} = $font_eid;
     $IdToFont{$font_eid} = $font_e;
+}
 }
 
 sub PTX {
     my $rec = shift;
     my $font_eid;
+    print STDERR '.';
     $rec->callback_members(['PTX::SCFL', 'PTX::TRN'], \$font_eid);
-    $rec->refresh;
+    $rec->refresh; 
     $rec->write; $rec->remove;
 }
 
