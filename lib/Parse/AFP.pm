@@ -1,7 +1,9 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.23';
+$Parse::AFP::VERSION = '0.24';
 
 use strict;
+use Encode::IBM;
+use Encode::EBCDIC;
 use base 'Parse::AFP::Base';
 use constant FORMAT => (
     Record => ['H2 n/a* XX', '*', '2'],
@@ -184,7 +186,7 @@ Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+Copyright 2004, 2005 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

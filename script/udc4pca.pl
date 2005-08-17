@@ -51,11 +51,13 @@ my %CodePages = (
     },
 );
 
-my ($input, $dbcs_pattern, @db);
+my ($dbcs_pattern, @db);
 my $codepage    = 947;
-my $output      = 'fixed.afp';
 my $dir         = 'udcdir';
 my $adjust;
+
+our $input;
+our $output = 'fixed.afp';
 
 GetOptions(
     'i|input:s'         => \$input,
@@ -75,10 +77,10 @@ die "Usage: $0 [-a] [-c 947|835] -d dbcs_pattern -i input.afp -o output.afp -f f
 
 $CodePages{$codepage} or die "Unknown codepage: $codepage";
 
-my ($FillChar, $FirstChar, $CharPattern, $NeedDBCSPattern, $NoUDC)
+our ($FillChar, $FirstChar, $CharPattern, $NeedDBCSPattern, $NoUDC)
     = @{$CodePages{$codepage}}{qw( FillChar FirstChar CharPattern NeedDBCSPattern NoUDC )};
 
-die "Need DBCS Pattern with -d for thsi codepage"
+die "Need DBCS Pattern with -d for this codepage"
     if $NeedDBCSPattern and !$dbcs_pattern;
 
 my (%FontToId, %IdToFont);
@@ -105,77 +107,18 @@ foreach my $idx (0..$#db) {
     %$fonts = (%$fonts, %$more_fonts);
 }
 
-print STDERR "Phase 1: Split...";
+##########################################################################
 
-(system(
-    $^X,
-    "$FindBin::Bin/udcsplit.pl", 
-    -i => $input,
-    -o => $dir,
-    -c => $codepage,
-) == 0) or die $?;
+# SPLIT!
+#
+udcsplit::run();
 
-opendir my $dh, $dir or die $!;
-my @files = sort { int($a) <=> int($b) } grep /\d/, readdir($dh);
-if (!grep /udc$/, @files) {
-    print STDERR "\nPhase 2: Skipped, no UDC found...";
-
-    if ($input ne $output) {
-        require File::Copy;
-        File::Copy::copy($input => $output);
-    }
-
-    print STDERR "\nDone!\n";
-    exit;
-}
-
-print STDERR "\nPhase 2: Join...";
-
-unlink $output if -e $output;
-open my $ofh, '>', $output or die $!;
-binmode($ofh);
-
-foreach my $file (@files) {
-    my $name = $file;
-    if ($file =~ /^(.+)\.udc$/) {
-        $name = $1;
-        udc4pca("$dir/$file" => "$dir/$name");
-    }
-    $name =~ /^\d+$/ or next;
-
-    open my $ifh, '<', "$dir/$name" or die $!;
-    binmode($ifh);
-    local $/ = \32768;
-    while (<$ifh>) {
-        print $ofh $_;
-    }
-    close $ifh;
-}
-
-close $ofh;
-
-dbmopen %errors, 'errors', 0644;
-if (my @errors = sort keys %errors) {
-    print "\nExceptions encountered:\n";
-    print join "\n", @errors, '';
-}
-dbmclose %errors;
-unlink glob("errors.*");
-
-print STDERR "\nDone!\n";
+##########################################################################
 
 sub udc4pca {
     my ($in, $out) = @_;
-    if (my $pid = fork) {
-        waitpid($pid, 0);
-        print STDERR ".";
-    }
-    else {
-        dbmopen %errors, 'errors', 0644;
-        my $afp = Parse::AFP->new($in, {lazy => 1, output_file => $out});
-        $afp->callback_members([qw( MCF1 MCF PGD PTX EMO EPG * )]);
-        exit;
-    }
+    my $afp = Parse::AFP->new($in, {lazy => 1, output_file => $out});
+    $afp->callback_members([qw( MCF1 MCF PGD PTX EMO EPG * )]);
 }
 
 ##########################################################################
@@ -243,7 +186,12 @@ sub PTX {
 
     while ($pos < $len) {
         my ($size, $code) = unpack("x${pos}CC", $$buf);
-        $size or die "Incorrect parsing: $pos\n";
+        $size or do {
+            open my $fh, '>:raw', 'buf.afp';
+            print $fh $$buf;
+            close $fh;
+            die "Incorrect parsing: $pos\n";
+        };
 
         if ($code == 0xDA or $code == 0xDB) {
             if (substr($$buf, $pos + 2, $size - 2) !~ $NoUDC) {
@@ -474,5 +422,144 @@ sub EPG {
     @UDC = ();
     $rec->done;
 }
+
+1;
+
+package udcsplit;
+
+my ($has_udc, $name, $prev, $has_BNG, $PTX_cnt);
+my ($itmp, $otmp, $ifh, $ofh, $ipos, $opos);
+
+use strict;
+
+sub run {
+    *Parse::AFP::Record::new = sub {
+        my ($self, $buf, $attr) = @_;
+        if (substr($$buf, 3, 3) eq "\xD3\xEE\x9B") { return bless($buf, 'PTX'); }
+#        if (substr($$buf, 3, 3) eq "\xD3\xA8\xAD") { return bless($buf, 'BNG'); }
+        if (substr($$buf, 3, 3) eq "\xD3\xA8\xAF") { return bless($buf, 'BPG'); }
+        if (substr($$buf, 3, 3) eq "\xD3\xA8\xDF") { return bless($buf, 'BMO'); }
+        return $self->Parse::Binary::new($buf, $attr);
+    };
+
+    *PTX::done = sub { return };
+    *BPG::done = sub { return };
+    *BMO::done = sub { return };
+    *PTX::callback = sub { udcsplit::PTX($_[0]) };
+    *BPG::callback = sub { udcsplit::BPG($_[0]) };
+    *BMO::callback = sub { udcsplit::BMO($_[0]) };
+
+    $name = $prev = 0;
+    $ipos = $opos = 0;
+    ($itmp, $otmp) = ("input-$$.afp", "output-$$.afp");
+
+    my $afp = Parse::AFP->new($main::input, { lazy => 1, output_file => $main::output });
+    ($ifh, $ofh) = @{$afp}{qw( input output )};
+
+    $afp->callback_members([qw( BMO BPG PTX * )]);
+    begin_page(0);
+}
+
+sub begin_page {
+    $prev = $name; $name++;
+
+    my $pos = tell($ifh) - $_[0];
+    udc4pca($pos) if $has_udc;
+    $has_udc = 0;
+
+    $ipos = $pos;
+    $opos = tell($ofh);
+#    print "ipos is now $ipos; opos is now $opos\n";
+}
+
+sub udc4pca {
+    if (my $pid = fork) {
+        waitpid($pid, 0);
+        ($? == 0) or die $?;
+        print STDERR '.';
+    }
+    else {
+        close $ifh;
+        close $ofh;
+
+        my $size = ($_[0] - $ipos);
+
+        open my $nfh, '<:raw', $main::input or die $!;
+        seek $nfh, $ipos, 0;
+
+        open my $fh, '>:raw', $itmp or die $!;
+
+        {
+            local $/ = \$size;
+            print $fh scalar <$nfh>;
+        }
+        close $fh;
+
+        no warnings 'redefine';
+        *Parse::AFP::Record::new = \&Parse::Binary::new;
+        undef &PTX::callback;
+        undef &PTX::done;
+
+        main::udc4pca($itmp => $otmp);
+        exit;
+    }
+
+    seek $ofh, $opos, 0;
+    open my $fh, '<:raw', $otmp or die $!;
+    local $/ = \32768;
+    while (<$fh>) {
+        print $ofh $_;
+    }
+    close $fh;
+
+    unlink ("input-$$.afp", "output-$$.afp");
+}
+
+sub BNG {
+    $has_BNG = 1;
+    begin_page(length ${$_[0]});
+    $_[0]->done;
+}
+
+BEGIN { *BMO = *BPG; }
+
+sub BPG {
+    begin_page(length ${$_[0]});
+    $_[0]->done;
+}
+
+sub PTX {
+    my $rec = my $buf = shift;
+
+    return $rec->done if $has_udc;
+
+    # Now iterate over $$buf.
+    my $pos = 11;
+    my $len = length($$buf);
+
+    while ($pos < $len) {
+        my ($size, $code) = unpack("x${pos}CC", $$buf);
+
+        $size or do {
+            open my $fh, '>:raw', 'buf.afp';
+            print $fh $$buf;
+            close $fh;
+            die "Wrong parsing: $pos\n";
+        };
+
+        if ($code == 0xDA or $code == 0xDB) {
+            if ( substr($$buf, $pos + 2, $size - 2) !~ /$main::NoUDC/o) {
+                $has_udc = 1;
+                last;
+            }
+        }
+
+        $pos += $size;
+    }
+
+    $rec->done;
+}
+
+sub __ { $_[0]->done }
 
 1;
