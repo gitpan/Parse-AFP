@@ -1,5 +1,5 @@
 package Parse::AFP;
-$Parse::AFP::VERSION = '0.24';
+$Parse::AFP::VERSION = '0.25';
 
 use strict;
 use Encode::IBM;
@@ -111,14 +111,16 @@ sub tight_loop {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
-Parse::AFP - IBM Advanced Function Printing Parser
+Parse::AFP - Parser for IBM's Advanced Function Printing document format
 
 =head1 VERSION
 
-This document describes version 0.23 of Parse::AFP, released
-October 21, 2004.
+This document describes version 0.25 of Parse::AFP, released
+October 16, 2010.
 
 =head1 SYNOPSIS
 
@@ -139,7 +141,7 @@ into an object hierarchy; each object may be individually modified, dumped
 into binary, or written back to another AFP file.
 
 Running the bundled C<afpdump.pl> on a AFP file will probably explain
-this module's behaviour better than reading the documentation.
+this module's behaviour better than reading this documentation.
 
 =head1 METHODS
 
@@ -180,17 +182,12 @@ Each class may define additional accessors, in the form of C<FieldName>
 and C<SetFieldName>.  There are no accessors for the toplevel B<Parse::AFP>
 object.
 
-=head1 AUTHORS
+=head1 CC0 1.0 Universal
 
-Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
+To the extent possible under law, 唐鳳 has waived all copyright and related
+or neighboring rights to Parse-AFP.
 
-=head1 COPYRIGHT
+This work is published from Taiwan.
 
-Copyright 2004, 2005 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
+L<http://creativecommons.org/publicdomain/zero/1.0>
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-See L<http://www.perl.com/perl/misc/Artistic.html>
-
-=cut

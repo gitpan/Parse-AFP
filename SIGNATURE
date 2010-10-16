@@ -1,12 +1,12 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.41.
+signed via the Module::Signature module, version 0.66.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
 
     % cpansign -v
 
-It would check each file's integrity, as well as the signature's
+It will check each file's integrity, as well as the signature's
 validity.  If "==> Signature verified OK! <==" is not displayed,
 the distribution may already have been compromised, and you should
 not run its Makefile.PL or Build.PL.
@@ -14,22 +14,21 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 3f64f161e288a8f73fbfc86cb42568752ff0c6e5 Changes
-SHA1 31a1b0b4f9c31a0c6ae57192971a994f68c3587b MANIFEST
-SHA1 a7b1b6be7e4d9836cd5c4b944420d357c75353de MANIFEST.SKIP
-SHA1 f8c18f53f5ee1cf4ec05d3835f5a722a7e4531a3 META.yml
-SHA1 48563520acfae046047870db44bc21a3496a8b15 Makefile.PL
-SHA1 99b90dc33e4ce4e2e0e5dc098b1a8804af4d3485 README
-SHA1 19e565da4e1516f3e722d54142e715eae98b6fd9 inc/Module/Install.pm
-SHA1 a7f7e2bfb0ac6f8ad965832ef3a246a7bd433058 inc/Module/Install/Base.pm
-SHA1 7b0e82ea99187c2121bfc8fe590de8363e8100d7 inc/Module/Install/Can.pm
-SHA1 d097dedadac0edcafbee3a14c262e24089f5795e inc/Module/Install/Fetch.pm
-SHA1 69b187644e08b73ab9ffbcb61ee51291e693685f inc/Module/Install/Makefile.pm
-SHA1 7298762404963528a5abcb0fa76cfe12afb9b87c inc/Module/Install/Metadata.pm
-SHA1 8c7eb61d081ec7783836d72ad81c0536df65dec0 inc/Module/Install/Scripts.pm
-SHA1 8ee248d67d4c61a4f01e6a96c41afbd93be4c9ef inc/Module/Install/Win32.pm
-SHA1 3c099dd7fb73a49bcc489b152c3ca3c7a1b36427 inc/Module/Install/WriteAll.pm
-SHA1 f431b63bb0d53be0dd04edefd10dd9b6a3cd7edd lib/Parse/AFP.pm
+SHA1 b416643f647bd7503c97a816a8c8ee2ae0b216a9 Changes
+SHA1 de8e67eb2f9a756815934498b0293d56419ce52e MANIFEST
+SHA1 2fcd17770dd6566fc77f2d9501d0568c1d6b8d6a META.yml
+SHA1 2d396063e87096999497b566f50223cabd169e58 Makefile.PL
+SHA1 cc8b6efc87de841c0a3adb0363d54ce2917655e6 README
+SHA1 7305dbe2904416e28decb05396988a5d51d578be inc/Module/Install.pm
+SHA1 129960509127732258570c122042bc48615222e1 inc/Module/Install/Base.pm
+SHA1 cf3356ed9a5bd2f732527ef9e7bc5ef4458c8a93 inc/Module/Install/Can.pm
+SHA1 bf0a3e1977effc2832d7a813a76dce3f31b437b6 inc/Module/Install/Fetch.pm
+SHA1 b721c93ca5bc9a6aa863b49af15f1b1de6125935 inc/Module/Install/Makefile.pm
+SHA1 026cc0551a0ad399d195e395b46bdf842e115192 inc/Module/Install/Metadata.pm
+SHA1 d3a4c720c6ec7f8fce7df37002fbc9177fb77050 inc/Module/Install/Scripts.pm
+SHA1 5457015ea5a50e93465bf2dafa29feebd547f85b inc/Module/Install/Win32.pm
+SHA1 051e7fa8063908befa3440508d0584a2497b97db inc/Module/Install/WriteAll.pm
+SHA1 4a41d13220fa7e81a75617a4989ee0e7649bcbf0 lib/Parse/AFP.pm
 SHA1 89455906513a3f33846da28dbe4953591e5f7c6d lib/Parse/AFP/BAG.pm
 SHA1 32a735dbc7d57634c96e9125ebb714da315667d9 lib/Parse/AFP/BBC.pm
 SHA1 108ed61812973984cb7a84c55949604e948b9582 lib/Parse/AFP/BCA.pm
@@ -243,13 +242,13 @@ SHA1 6770217a1d79ce0637373e30ef5d7e6eed2f230a script/afpsplit.pl
 SHA1 2460f2ac28176f0f97e321b6310d7aeb5d3d7509 script/afpviewfontdb.pl
 SHA1 d105528a19d1ffcc698f0b94ce83405e97f4baa9 script/udc4pca.pl
 SHA1 b728f2625564ae320b37259e89246ecaadc33a76 script/udcsplit.pl
-SHA1 f3e7309996c4de9a7e05ded43499dcdbf92aa428 t/0-signature.t
+SHA1 41afe2c04bb573b40e283e2b210ed70a47a3f8ba t/0-signature.t
 SHA1 f97124d125dd9ac1fda2e45bc5dd6d678d2b72a0 t/1-basic.t
 SHA1 3e279578b6acddbcf3bb39a8e2252f5eba5daa23 t/in.afp
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (FreeBSD)
+Version: GnuPG v1.4.10 (Darwin)
 
-iD8DBQFDAq+ytLPdNzw1AaARAtqNAJ9vZJxA9kHhkjJJdL9CucTvwB+R+ACgoNRp
-7BO123gmp2+UT3fTq5nR1fs=
-=kti9
+iEYEARECAAYFAky5BLQACgkQtLPdNzw1AaC63ACePZC3QpQBpWqb1U9SdSAVXdCj
+jyoAoItnZ6I/sKuNyXyViAVMJRhUNaxr
+=sCMQ
 -----END PGP SIGNATURE-----

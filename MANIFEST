@@ -217,7 +217,6 @@ lib/Parse/AFP/Triplet/TS.pm
 lib/Parse/AFP/Triplet/UDTS.pm
 Makefile.PL
 MANIFEST			This list of files
-MANIFEST.SKIP
 META.yml
 README
 script/afpconv.pl

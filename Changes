@@ -1,3 +1,13 @@
+[Changes for 0.25 - 2010-10-06]
+
+* LICENSING CHANGE: This compilation and all individual files in it
+  are now under the nullary CC0 1.0 Universal terms:
+
+  To the extent possible under law, 唐鳳 has waived all copyright and
+  related or neighboring rights to Module-Signature.
+
+* Updated Module::Install to 1.00, prompted by CPAN testers.
+
 [Changes for 0.24 - 2005-08-17]
 
 * Explicity use "Encode::EBCDIC" and "Encode::IBM" at Parse::AFP

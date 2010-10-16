@@ -1,22 +1,65 @@
-This is the README file for Parse::AFP, a module for parsing
-IBM's AFP (Advanced Function Printiner) files.
+NAME
+    Parse::AFP - Parser for IBM's Advanced Function Printing document format
 
-Please type "perldoc Parse::AFP" after installation to see
-the module usage information.
+VERSION
+    This document describes version 0.25 of Parse::AFP, released October 16,
+    2010.
 
-* Installation
+SYNOPSIS
+        use Parse::AFP;
+        my $afp = Parse::AFP->new('input.afp');
+        while (my $rec = $afp->next_member) {
+            print $rec->dump;
+            # ...
+            $rec->refresh; # if modified
+        }
+        $afp->refresh; # if modified
+        $afp->write('output.afp');
 
-Parse::AFP uses the standard perl module install process:
+DESCRIPTION
+    This module processes IBM's AFP (Advanced Function Printing) files into
+    an object hierarchy; each object may be individually modified, dumped
+    into binary, or written back to another AFP file.
 
-    cpansign -v		# optional; see SIGNATURE for details
-    perl Makefile.PL
-    make			# or 'nmake' on Win32; see notes below
-    make test
-    make install
+    Running the bundled "afpdump.pl" on a AFP file will probably explain
+    this module's behaviour better than reading this documentation.
 
-* Copyright
+METHODS
+    Methods below applies to all objects in the objects hierarchy.
 
-Copyright 2004, 2005 by Autrijus Tang <autrijus@autrijus.org>.
+  new
+    Constructor. Takes either a filename, or a scalar reference to content.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+  dump
+    Returns the binary representation of the current object.
+
+  write
+    Takes a filename and writes the binary representation to it.
+
+  refresh
+    Regenerate binary representation from in-memory data from the object
+    itself and its members. Also refreshes all uplevel parents.
+
+  members
+    Returns a list of member objects, if any.
+
+  next_member
+    Iterator for member objects.
+
+  parent
+    Returns the parent of this object, or *undef* if this is the toplevel
+    object.
+
+ACCESSORS
+    Each class may define additional accessors, in the form of "FieldName"
+    and "SetFieldName". There are no accessors for the toplevel Parse::AFP
+    object.
+
+CC0 1.0 Universal
+    To the extent possible under law, 唐鳳 has waived all copyright and
+    related or neighboring rights to Parse-AFP.
+
+    This work is published from Taiwan.
+
+    <http://creativecommons.org/publicdomain/zero/1.0>
+
